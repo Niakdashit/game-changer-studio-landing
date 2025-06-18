@@ -13,7 +13,13 @@ interface WizardEditorProps {
   isLastStep: boolean;
 }
 
-export const WizardEditor = ({ formData, onPrevious }: WizardEditorProps) => {
+export const WizardEditor = ({
+  formData,
+  updateFormData,
+  onPrevious,
+  currentStep,
+  isLastStep
+}: WizardEditorProps) => {
   const [devicePreview, setDevicePreview] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
 
   const deviceSizes = {
@@ -32,6 +38,7 @@ export const WizardEditor = ({ formData, onPrevious }: WizardEditorProps) => {
               <h2 className="text-3xl font-sora font-bold text-gray-warm mb-2">
                 Éditeur Live
               </h2>
+              <p className="text-sm text-gray-500 mb-1">Étape {currentStep}</p>
               <p className="text-lg font-inter text-gray-600">
                 Personnalisez votre jeu en temps réel
               </p>
@@ -95,6 +102,7 @@ export const WizardEditor = ({ formData, onPrevious }: WizardEditorProps) => {
                     <input
                       type="color"
                       value={formData.primaryColor}
+                      onChange={(e) => updateFormData({ primaryColor: e.target.value })}
                       className="w-10 h-10 rounded-lg border border-gray-300"
                     />
                     <span className="text-sm font-mono">{formData.primaryColor}</span>
@@ -108,6 +116,7 @@ export const WizardEditor = ({ formData, onPrevious }: WizardEditorProps) => {
                     <input
                       type="color"
                       value={formData.secondaryColor}
+                      onChange={(e) => updateFormData({ secondaryColor: e.target.value })}
                       className="w-10 h-10 rounded-lg border border-gray-300"
                     />
                     <span className="text-sm font-mono">{formData.secondaryColor}</span>
@@ -209,13 +218,16 @@ export const WizardEditor = ({ formData, onPrevious }: WizardEditorProps) => {
               Retour
             </Button>
             
-            <Button
-              size="lg"
-              className="bg-gradient-to-r from-primary to-primary-light text-white font-inter font-semibold px-8 hover:scale-104 transition-all duration-250"
-            >
-              <Save className="mr-2 h-4 w-4" />
-              Sauvegarder & Diffuser
-            </Button>
+            {isLastStep && (
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-primary to-primary-light text-white font-inter font-semibold px-8 hover:scale-104 transition-all duration-250"
+                onClick={() => console.log('Saved', formData)}
+              >
+                <Save className="mr-2 h-4 w-4" />
+                Sauvegarder & Diffuser
+              </Button>
+            )}
           </div>
         </div>
       </div>
