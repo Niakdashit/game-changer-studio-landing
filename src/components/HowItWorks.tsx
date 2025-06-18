@@ -1,34 +1,37 @@
 
-import { Palette, Gamepad, Share2 } from 'lucide-react';
+import { MessageSquare, Gamepad, Share2 } from 'lucide-react';
 
 export const HowItWorks = () => {
   const steps = [
     {
-      icon: Palette,
-      title: "Brief & Branding",
-      description: "Définissez votre univers graphique et vos objectifs en quelques clics."
+      icon: MessageSquare,
+      title: "Décrivez votre marque ou votre idée",
+      description: "Quelques mots suffisent : notre IA comprend votre univers et vos objectifs."
     },
     {
       icon: Gamepad,
-      title: "Choix mécanique",
-      description: "Sélectionnez le format de jeu qui correspond à votre stratégie."
+      title: "Choisissez une mécanique signature",
+      description: "Roue, quiz, grattage, jackpot... Sélectionnez le format qui maximise l'engagement."
     },
     {
       icon: Share2,
-      title: "Partage omnicanal",
-      description: "Diffusez sur tous vos supports digitaux avec un seul code d'intégration."
+      title: "Personnalisez et partagez instantanément",
+      description: "Ajustez les détails, puis diffusez sur tous vos canaux en un clic."
     }
   ];
 
   return (
-    <section className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 bg-gradient-to-br from-gray-warm to-gray-warm/95 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-sora font-bold text-gray-warm mb-4">
-            Trois étapes vers l'engagement parfait
+          <h2 className="text-3xl md:text-4xl font-sora font-bold text-white mb-4">
+            Comment ça marche
           </h2>
-          <p className="text-lg font-inter text-gray-600 max-w-2xl mx-auto">
-            Notre studio intuitif transforme vos idées en expériences interactives professionnelles.
+          <p className="text-lg font-inter text-gray-300 max-w-2xl mx-auto">
+            Trois étapes pour transformer vos idées en expériences captivantes
           </p>
         </div>
         
@@ -39,18 +42,18 @@ export const HowItWorks = () => {
               className="text-center group hover:scale-104 transition-all duration-250"
             >
               <div className="relative mb-6">
-                <div className="w-16 h-16 mx-auto bg-gradient-to-br from-primary to-primary-light rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-primary/25 transition-shadow duration-250">
-                  <step.icon className="h-8 w-8 text-white" />
+                <div className="w-20 h-20 mx-auto bg-gradient-to-br from-primary to-primary-light rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-primary/25 transition-shadow duration-250 backdrop-blur-12">
+                  <step.icon className="h-9 w-9 text-white" />
                 </div>
-                <div className="absolute -top-2 -right-2 w-6 h-6 bg-white rounded-full border-2 border-primary/20 flex items-center justify-center text-xs font-sora font-bold text-primary">
+                <div className="absolute -top-3 -right-3 w-8 h-8 bg-white rounded-full border-2 border-primary/20 flex items-center justify-center text-sm font-sora font-bold text-primary shadow-lg">
                   {index + 1}
                 </div>
               </div>
               
-              <h3 className="text-xl font-sora font-bold text-gray-warm mb-3">
+              <h3 className="text-xl font-sora font-bold text-white mb-4">
                 {step.title}
               </h3>
-              <p className="font-inter text-gray-600 leading-relaxed">
+              <p className="font-inter text-gray-300 leading-relaxed">
                 {step.description}
               </p>
             </div>

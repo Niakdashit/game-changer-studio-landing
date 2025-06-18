@@ -1,8 +1,12 @@
 
 import { Hero } from '@/components/Hero';
-import { SocialProof } from '@/components/SocialProof';
+import { WhyChoose } from '@/components/WhyChoose';
 import { HowItWorks } from '@/components/HowItWorks';
-import { FeatureGrid } from '@/components/FeatureGrid';
+import { InteractivePreview } from '@/components/InteractivePreview';
+import { SocialProof } from '@/components/SocialProof';
+import { WhatMakesDifferent } from '@/components/WhatMakesDifferent';
+import { GameMechanics } from '@/components/GameMechanics';
+import { ShareIntegration } from '@/components/ShareIntegration';
 import { TestimonialSlider } from '@/components/TestimonialSlider';
 import { CTASection } from '@/components/CTASection';
 import { Footer } from '@/components/Footer';
@@ -13,9 +17,13 @@ const Index = () => {
     <div className="min-h-screen bg-gray-light">
       <Navigation />
       <Hero />
-      <SocialProof />
+      <WhyChoose />
       <HowItWorks />
-      <FeatureGrid />
+      <InteractivePreview />
+      <SocialProof />
+      <WhatMakesDifferent />
+      <GameMechanics />
+      <ShareIntegration />
       <TestimonialSlider />
       <CTASection />
       <Footer />

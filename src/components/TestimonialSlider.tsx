@@ -4,21 +4,21 @@ import { useState, useEffect } from 'react';
 export const TestimonialSlider = () => {
   const testimonials = [
     {
-      quote: "GameCraft a révolutionné notre approche de l'engagement client. Les résultats dépassent nos attentes.",
+      quote: "GameChanger a transformé notre approche de l'engagement client. Nos campagnes génèrent désormais 5x plus d'interactions qualifiées.",
       name: "Sarah Chen",
       role: "Directrice Marketing",
       company: "TechCorp",
       avatar: "👩‍💼"
     },
     {
-      quote: "Un outil professionnel qui nous fait gagner des semaines de développement. L'interface est remarquable.",
+      quote: "L'esthétique est remarquable et l'intégration seamless. Nos équipes créatives ont enfin l'outil qu'elles méritaient.",
       name: "Marc Dubois",
       role: "Creative Director",
       company: "Studio Alpha",
       avatar: "👨‍🎨"
     },
     {
-      quote: "Nos campagnes interactives génèrent maintenant 3x plus d'engagement qu'avant. Impressionnant !",
+      quote: "ROI immédiat sur nos campagnes. Les métriques parlent d'elles-mêmes : +340% de temps passé sur nos landing pages.",
       name: "Lisa Wang",
       role: "Head of Digital",
       company: "Fashion Brand",
@@ -31,19 +31,21 @@ export const TestimonialSlider = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
-    }, 5000);
+    }, 6000);
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <section className="py-20 bg-white">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 bg-gradient-to-br from-primary/5 to-primary-light/5 relative overflow-hidden">
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%237E5BEC" fill-opacity="0.03"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
+      
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-sora font-bold text-gray-warm mb-4">
-            Ils transforment leur engagement
+            Témoignages clients
           </h2>
           <p className="text-lg font-inter text-gray-600">
-            Découvrez comment nos clients créent des expériences mémorables.
+            Ils ont choisi l'excellence pour leurs campagnes
           </p>
         </div>
         
@@ -55,20 +57,20 @@ export const TestimonialSlider = () => {
             >
               {testimonials.map((testimonial, index) => (
                 <div key={index} className="w-full flex-shrink-0">
-                  <div className="bg-gradient-to-br from-gray-light to-white p-8 md:p-12 rounded-2xl border border-gray-200/50 shadow-lg">
+                  <div className="bg-white/60 backdrop-blur-12 p-8 md:p-12 rounded-3xl border border-white/50 shadow-xl">
                     <blockquote className="text-xl md:text-2xl font-inter text-gray-warm leading-relaxed mb-8 text-center">
                       "{testimonial.quote}"
                     </blockquote>
                     
                     <div className="flex items-center justify-center space-x-4">
-                      <div className="w-14 h-14 bg-gradient-to-br from-primary to-primary-light rounded-full flex items-center justify-center text-2xl">
+                      <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary-light rounded-full flex items-center justify-center text-2xl shadow-lg">
                         {testimonial.avatar}
                       </div>
                       <div className="text-center">
-                        <div className="font-sora font-bold text-gray-warm">
+                        <div className="font-sora font-bold text-gray-warm text-lg">
                           {testimonial.name}
                         </div>
-                        <div className="font-inter text-gray-600 text-sm">
+                        <div className="font-inter text-gray-600">
                           {testimonial.role} • {testimonial.company}
                         </div>
                       </div>
@@ -86,7 +88,7 @@ export const TestimonialSlider = () => {
                 onClick={() => setCurrentIndex(index)}
                 className={`w-3 h-3 rounded-full transition-all duration-250 ${
                   index === currentIndex 
-                    ? 'bg-primary' 
+                    ? 'bg-primary scale-125' 
                     : 'bg-gray-300 hover:bg-gray-400'
                 }`}
               />

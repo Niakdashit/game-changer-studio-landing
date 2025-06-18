@@ -9,10 +9,10 @@ export const Footer = () => {
           {/* Logo and Description */}
           <div className="md:col-span-2">
             <h3 className="text-2xl font-sora font-bold bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent mb-4">
-              GameCraft
+              GameChanger Studio
             </h3>
             <p className="font-inter text-gray-300 mb-6 max-w-md">
-              La plateforme de référence pour créer des expériences de marque interactives et mémorables.
+              La plateforme premium pour créer des expériences de marque gamifiées qui marquent les esprits et boostent vos conversions.
             </p>
             
             <div className="flex space-x-4">
@@ -48,12 +48,12 @@ export const Footer = () => {
               </li>
               <li>
                 <a href="#" className="font-inter text-gray-300 hover:text-white transition-colors duration-250">
-                  Templates
+                  Tarifs
                 </a>
               </li>
               <li>
                 <a href="#" className="font-inter text-gray-300 hover:text-white transition-colors duration-250">
-                  Intégrations
+                  Templates
                 </a>
               </li>
             </ul>
@@ -64,11 +64,6 @@ export const Footer = () => {
             <ul className="space-y-2">
               <li>
                 <a href="#" className="font-inter text-gray-300 hover:text-white transition-colors duration-250">
-                  Tarifs
-                </a>
-              </li>
-              <li>
-                <a href="#" className="font-inter text-gray-300 hover:text-white transition-colors duration-250">
                   Blog
                 </a>
               </li>
@@ -77,13 +72,18 @@ export const Footer = () => {
                   RGPD
                 </a>
               </li>
+              <li>
+                <a href="#" className="font-inter text-gray-300 hover:text-white transition-colors duration-250">
+                  Contact
+                </a>
+              </li>
             </ul>
           </div>
         </div>
         
         <div className="border-t border-white/10 mt-12 pt-8 text-center">
           <p className="font-inter text-gray-400 text-sm">
-            © 2024 GameCraft. Tous droits réservés.
+            © 2024 GameChanger Studio. Tous droits réservés. • SaaS français
           </p>
         </div>
       </div>

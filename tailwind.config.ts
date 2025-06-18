@@ -69,8 +69,8 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				gray: {
-					warm: '#1E1E1E',
-					light: '#F5F4FA'
+					warm: '#1F1F1F',
+					light: '#FAFAFA'
 				}
 			},
 			borderRadius: {
@@ -119,13 +119,31 @@ export default {
 					'100%': {
 						color: '#7E5BEC'
 					}
+				},
+				'float': {
+					'0%, 100%': {
+						transform: 'translateY(0px)'
+					},
+					'50%': {
+						transform: 'translateY(-10px)'
+					}
+				},
+				'spin-slow': {
+					from: {
+						transform: 'rotate(0deg)'
+					},
+					to: {
+						transform: 'rotate(360deg)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'gradient-shift': 'gradient-shift 8s ease-in-out infinite',
-				'color-shift': 'color-shift 4s ease-in-out infinite'
+				'color-shift': 'color-shift 4s ease-in-out infinite',
+				'float': 'float 6s ease-in-out infinite',
+				'spin-slow': 'spin-slow 20s linear infinite'
 			},
 			backdropBlur: {
 				'12': '12px'

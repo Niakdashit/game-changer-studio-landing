@@ -12,7 +12,7 @@ export const Navigation = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex-shrink-0">
             <h1 className="text-xl font-sora font-bold bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
-              GameCraft
+              GameChanger Studio
             </h1>
           </div>
           
