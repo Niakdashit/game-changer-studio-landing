@@ -3,10 +3,11 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Monitor, Tablet, Smartphone, Save } from 'lucide-react';
+import type { WizardFormData } from '@/lib/types';
 
 interface WizardEditorProps {
-  formData: any;
-  updateFormData: (data: any) => void;
+  formData: WizardFormData;
+  updateFormData: (data: Partial<WizardFormData>) => void;
   onPrevious: () => void;
   currentStep: number;
   isLastStep: boolean;

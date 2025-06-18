@@ -1,10 +1,11 @@
 
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import type { WizardFormData } from '@/lib/types';
 
 interface WizardMecaniqueProps {
-  formData: any;
-  updateFormData: (data: any) => void;
+  formData: WizardFormData;
+  updateFormData: (data: Partial<WizardFormData>) => void;
   onNext: () => void;
   onPrevious: () => void;
   currentStep: number;
