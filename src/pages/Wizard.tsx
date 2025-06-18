@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { X, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,7 +6,7 @@ import { WizardMecanique } from '@/components/wizard/WizardMecanique';
 import { WizardGeneration } from '@/components/wizard/WizardGeneration';
 import { WizardEditor } from '@/components/wizard/WizardEditor';
 import type { WizardFormData } from '@/lib/types';
-import wizardPromptV2 from '@/lib/wizardPromptV2';
+import wizardPromptV2 from '@/lib/wizardPromptV2'; // ✅ conserver cet import
 
 const stepComponents = [
   WizardBranding,
@@ -80,7 +79,7 @@ const Wizard = () => {
                 ))}
               </div>
             </div>
-            
+
             <Button
               variant="ghost"
               size="icon"
