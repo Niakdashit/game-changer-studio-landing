@@ -81,3 +81,11 @@ To run the project locally:
 3. Build the project with `npm run build` or start a dev server using `npm run dev`.
 
 This ensures ESLint has the packages it needs and the build succeeds.
+
+## Wizard feature
+
+Follow these steps to try the new wizard interface:
+
+1. Install dependencies with `npm install`.
+2. Start the development server using `npm run dev`.
+3. Visit `http://localhost:8080/wizard` in your browser.
