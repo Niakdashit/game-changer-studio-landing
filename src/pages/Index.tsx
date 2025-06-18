@@ -5,7 +5,8 @@ import { HowItWorks } from '@/components/HowItWorks';
 import { InteractivePreview } from '@/components/InteractivePreview';
 import { SocialProof } from '@/components/SocialProof';
 import { WhatMakesDifferent } from '@/components/WhatMakesDifferent';
-import { GameMechanics } from '@/components/GameMechanics';
+import { TrustSecurity } from '@/components/TrustSecurity';
+import { EnhancedGameMechanics } from '@/components/EnhancedGameMechanics';
 import { ShareIntegration } from '@/components/ShareIntegration';
 import { TestimonialSlider } from '@/components/TestimonialSlider';
 import { CTASection } from '@/components/CTASection';
@@ -22,7 +23,8 @@ const Index = () => {
       <InteractivePreview />
       <SocialProof />
       <WhatMakesDifferent />
-      <GameMechanics />
+      <TrustSecurity />
+      <EnhancedGameMechanics />
       <ShareIntegration />
       <TestimonialSlider />
       <CTASection />
