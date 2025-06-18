@@ -6,6 +6,7 @@ import { WizardBranding } from '@/components/wizard/WizardBranding';
 import { WizardMecanique } from '@/components/wizard/WizardMecanique';
 import { WizardGeneration } from '@/components/wizard/WizardGeneration';
 import { WizardEditor } from '@/components/wizard/WizardEditor';
+import type { WizardFormData } from '@/lib/types';
 
 const steps = [
   { id: 1, title: 'Brief & Branding', component: WizardBranding },
@@ -16,7 +17,7 @@ const steps = [
 
 const Wizard = () => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<WizardFormData>({
     logo: null,
     primaryColor: '#7E5BEC',
     secondaryColor: '#C097F9',
@@ -41,7 +42,7 @@ const Wizard = () => {
     window.history.back();
   };
 
-  const updateFormData = (data: any) => {
+  const updateFormData = (data: Partial<WizardFormData>) => {
     setFormData(prev => ({ ...prev, ...data }));
   };
 
