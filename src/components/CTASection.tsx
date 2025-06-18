@@ -43,17 +43,17 @@ export const CTASection = () => {
               Transformez vos idées en expériences captivantes. Créez votre premier jeu en moins de 5 minutes.
             </p>
             
-            <Button 
+            <Button
+              asChild
               size="lg"
               className="bg-white text-primary hover:bg-gray-50 font-inter font-bold px-16 py-6 text-xl rounded-2xl hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-white/25 relative overflow-hidden group animate-glow-pulse"
             >
-              <span className="relative z-10 flex items-center gap-3">
+              <a href="/wizard" className="relative z-10 flex items-center gap-3">
                 <Sparkles className="w-6 h-6" />
                 Générez votre premier jeu
-              </span>
-              
-              {/* Shimmer Effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -skew-x-12 group-hover:animate-shimmer"></div>
+                {/* Shimmer Effect */}
+                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -skew-x-12 group-hover:animate-shimmer" />
+              </a>
             </Button>
             
             <p className="text-white/70 font-inter text-lg mt-8">

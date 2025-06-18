@@ -31,8 +31,11 @@ export const Navigation = () => {
               <Button variant="outline" className="font-inter font-medium">
                 Se connecter
               </Button>
-              <Button className="bg-gradient-to-r from-primary to-primary-light text-white font-inter font-medium hover:scale-105 transition-transform duration-250">
-                Commencer
+              <Button
+                asChild
+                className="bg-gradient-to-r from-primary to-primary-light text-white font-inter font-medium hover:scale-105 transition-transform duration-250"
+              >
+                <a href="/wizard">Commencer</a>
               </Button>
             </div>
           </div>
@@ -65,8 +68,11 @@ export const Navigation = () => {
                 <Button variant="outline" className="w-full font-inter font-medium">
                   Se connecter
                 </Button>
-                <Button className="w-full bg-gradient-to-r from-primary to-primary-light text-white font-inter font-medium">
-                  Commencer
+                <Button
+                  asChild
+                  className="w-full bg-gradient-to-r from-primary to-primary-light text-white font-inter font-medium"
+                >
+                  <a href="/wizard">Commencer</a>
                 </Button>
               </div>
             </div>
