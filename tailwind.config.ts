@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -18,6 +19,10 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				'sora': ['Sora', 'sans-serif'],
+				'inter': ['Inter', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -25,7 +30,8 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				primary: {
-					DEFAULT: 'hsl(var(--primary))',
+					DEFAULT: '#7E5BEC',
+					light: '#C097F9',
 					foreground: 'hsl(var(--primary-foreground))'
 				},
 				secondary: {
@@ -61,6 +67,10 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				gray: {
+					warm: '#1E1E1E',
+					light: '#F5F4FA'
 				}
 			},
 			borderRadius: {
@@ -84,11 +94,41 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'gradient-shift': {
+					'0%, 100%': {
+						backgroundPosition: '0% 50%'
+					},
+					'50%': {
+						backgroundPosition: '100% 50%'
+					}
+				},
+				'color-shift': {
+					'0%': {
+						color: '#7E5BEC'
+					},
+					'25%': {
+						color: '#C097F9'
+					},
+					'50%': {
+						color: '#7E5BEC'
+					},
+					'75%': {
+						color: '#C097F9'
+					},
+					'100%': {
+						color: '#7E5BEC'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'gradient-shift': 'gradient-shift 8s ease-in-out infinite',
+				'color-shift': 'color-shift 4s ease-in-out infinite'
+			},
+			backdropBlur: {
+				'12': '12px'
 			}
 		}
 	},
