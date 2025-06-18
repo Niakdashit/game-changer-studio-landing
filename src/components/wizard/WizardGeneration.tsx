@@ -1,11 +1,12 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, RotateCcw } from 'lucide-react';
+import type { WizardFormData } from '@/lib/types';
 
 interface WizardGenerationProps {
-  formData: any;
-  updateFormData: (data: any) => void;
+  formData: WizardFormData;
+  updateFormData: (data: Partial<WizardFormData>) => void;
   onNext: () => void;
   onPrevious: () => void;
   currentStep: number;
@@ -15,12 +16,7 @@ export const WizardGeneration = ({ formData, updateFormData, onNext, onPrevious 
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGenerated, setIsGenerated] = useState(false);
 
-  useEffect(() => {
-    // Auto-start generation when component mounts
-    startGeneration();
-  }, []);
-
-  const startGeneration = () => {
+  const startGeneration = useCallback(() => {
     setIsGenerating(true);
     setIsGenerated(false);
     
@@ -30,7 +26,12 @@ export const WizardGeneration = ({ formData, updateFormData, onNext, onPrevious 
       setIsGenerated(true);
       updateFormData({ generatedGame: true });
     }, 3000);
-  };
+  }, [updateFormData]);
+
+  useEffect(() => {
+    // Auto-start generation when component mounts
+    startGeneration();
+  }, [startGeneration]);
 
   const handleRegenerate = () => {
     startGeneration();

@@ -4,10 +4,11 @@ import { Upload, Palette } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import type { WizardFormData } from '@/lib/types';
 
 interface WizardBrandingProps {
-  formData: any;
-  updateFormData: (data: any) => void;
+  formData: WizardFormData;
+  updateFormData: (data: Partial<WizardFormData>) => void;
   onNext: () => void;
   currentStep: number;
 }
