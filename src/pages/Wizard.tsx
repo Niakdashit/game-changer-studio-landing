@@ -1,18 +1,19 @@
 
 import { useState } from 'react';
-import { X, ArrowLeft, ArrowRight } from 'lucide-react';
+import { X, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { WizardBranding } from '@/components/wizard/WizardBranding';
 import { WizardMecanique } from '@/components/wizard/WizardMecanique';
 import { WizardGeneration } from '@/components/wizard/WizardGeneration';
 import { WizardEditor } from '@/components/wizard/WizardEditor';
 import type { WizardFormData } from '@/lib/types';
+import wizardPromptV2 from '@/lib/wizardPromptV2';
 
-const steps = [
-  { id: 1, title: 'Brief & Branding', component: WizardBranding },
-  { id: 2, title: 'Choix Mécanique', component: WizardMecanique },
-  { id: 3, title: 'Génération AI', component: WizardGeneration },
-  { id: 4, title: 'Éditeur Live', component: WizardEditor },
+const stepComponents = [
+  WizardBranding,
+  WizardMecanique,
+  WizardGeneration,
+  WizardEditor
 ];
 
 const Wizard = () => {
@@ -27,7 +28,7 @@ const Wizard = () => {
   });
 
   const handleNext = () => {
-    if (currentStep < steps.length) {
+    if (currentStep < wizardPromptV2.steps.length) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -46,7 +47,7 @@ const Wizard = () => {
     setFormData(prev => ({ ...prev, ...data }));
   };
 
-  const CurrentStepComponent = steps[currentStep - 1].component;
+  const CurrentStepComponent = stepComponents[currentStep - 1];
 
   return (
     <div className="fixed inset-0 z-50 bg-gray-light min-h-screen">
@@ -59,18 +60,20 @@ const Wizard = () => {
                 GameCraft
               </h1>
               <div className="hidden md:flex items-center space-x-2 text-sm font-inter">
-                {steps.map((step, index) => (
-                  <div key={step.id} className="flex items-center">
-                    <span className={`px-3 py-1 rounded-full ${
-                      currentStep === step.id 
-                        ? 'bg-primary text-white' 
-                        : currentStep > step.id
-                        ? 'bg-primary/20 text-primary'
-                        : 'bg-gray-200 text-gray-600'
-                    }`}>
-                      {step.id}. {step.title}
+                {wizardPromptV2.steps.map((step, index) => (
+                  <div key={index} className="flex items-center">
+                    <span
+                      className={`px-3 py-1 rounded-full ${
+                        currentStep === index + 1
+                          ? 'bg-primary text-white'
+                          : currentStep > index + 1
+                          ? 'bg-primary/20 text-primary'
+                          : 'bg-gray-200 text-gray-600'
+                      }`}
+                    >
+                      {index + 1}. {step.title}
                     </span>
-                    {index < steps.length - 1 && (
+                    {index < wizardPromptV2.steps.length - 1 && (
                       <ArrowRight className="mx-2 h-4 w-4 text-gray-400" />
                     )}
                   </div>
@@ -94,16 +97,16 @@ const Wizard = () => {
       <div className="md:hidden px-4 py-3 bg-white/50 border-b border-gray-200/30">
         <div className="flex justify-between items-center text-sm font-inter">
           <span className="font-medium text-gray-600">
-            Étape {currentStep} sur {steps.length}
+            Étape {currentStep} sur {wizardPromptV2.steps.length}
           </span>
           <span className="font-semibold text-primary">
-            {steps[currentStep - 1].title}
+            {wizardPromptV2.steps[currentStep - 1].title}
           </span>
         </div>
         <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
           <div 
             className="bg-gradient-to-r from-primary to-primary-light h-2 rounded-full transition-all duration-500"
-            style={{ width: `${(currentStep / steps.length) * 100}%` }}
+            style={{ width: `${(currentStep / wizardPromptV2.steps.length) * 100}%` }}
           ></div>
         </div>
       </div>
@@ -116,7 +119,7 @@ const Wizard = () => {
           onNext={handleNext}
           onPrevious={handlePrevious}
           currentStep={currentStep}
-          isLastStep={currentStep === steps.length}
+          isLastStep={currentStep === wizardPromptV2.steps.length}
         />
       </main>
     </div>
