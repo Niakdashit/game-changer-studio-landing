@@ -7,7 +7,9 @@ export const Hero = () => {
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16">
       {/* Animated Background with Light Rays */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary-light/5 to-gray-light animate-gradient-shift bg-[length:400%_400%]"></div>
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="100" height="100" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3Cpattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"%3E%3Cpath d="M 100 0 L 0 0 0 100" fill="none" stroke="%23E5E7EB" stroke-width="1" opacity="0.1"/%3E%3C/pattern%3E%3C/defs%3E%3Crect width="100%25" height="100%25" fill="url(%23grid)"/%3E%3C/svg%3E')] opacity-30"></div>
+      <div className="absolute inset-0 opacity-30">
+        <div className="w-full h-full bg-grid-gray-200/10"></div>
+      </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
