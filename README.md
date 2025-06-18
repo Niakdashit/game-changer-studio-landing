@@ -71,3 +71,13 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+## Local development
+
+To run the project locally:
+
+1. Install dependencies with `npm install`.
+2. Run `npm run lint` to check code quality.
+3. Build the project with `npm run build` or start a dev server using `npm run dev`.
+
+This ensures ESLint has the packages it needs and the build succeeds.
