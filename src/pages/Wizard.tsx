@@ -111,7 +111,7 @@ const Wizard = () => {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1">
         <CurrentStepComponent 
           formData={formData}
           updateFormData={updateFormData}
