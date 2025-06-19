@@ -1,7 +1,8 @@
+
 import { useState } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
-import { WizardBranding } from '@/components/wizard/WizardBranding';
+import { BrandConfigurator } from '@/components/wizard/BrandConfigurator';
 import { WizardMecanique } from '@/components/wizard/WizardMecanique';
 import { WizardGeneration } from '@/components/wizard/WizardGeneration';
 import { WizardEditor } from '@/components/wizard/WizardEditor';
@@ -12,15 +13,18 @@ const Wizard = () => {
 
   const [formData, setFormData] = useState<WizardFormData>({
     logo: null,
-    primaryColor: '#000000',
-    secondaryColor: '#ffffff',
+    primaryColor: '#e52529',
+    secondaryColor: '#ffd600',
+    accentColor: '#009de0',
     brief: '',
     mechanic: '',
     generatedGame: null,
     brandTone: '',
     objectives: [],
     audience: [],
-    productName: ''
+    productName: '',
+    gameTitle: '',
+    prizes: ['', '', '', '']
   });
 
   // Fonction pour mettre à jour les données du formulaire
@@ -36,7 +40,7 @@ const Wizard = () => {
       <Navigation />
 
       {step === 0 && (
-        <WizardBranding
+        <BrandConfigurator
           formData={formData}
           updateFormData={updateFormData}
           onNext={next}

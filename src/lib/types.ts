@@ -1,7 +1,9 @@
+
 export interface WizardFormData {
   logo: File | null;
   primaryColor: string;
   secondaryColor: string;
+  accentColor?: string;
   brief: string;
   mechanic: string;
   generatedGame: boolean | null;
@@ -14,6 +16,12 @@ export interface WizardFormData {
   objectives?: string[];
   audience?: string[];
   productName?: string;
+  gameTitle?: string;
+  prizes?: string[];
+  backgroundDesktop?: File | null;
+  backgroundMobile?: File | null;
+  backgroundDesktopUrl?: string | null;
+  backgroundMobileUrl?: string | null;
 }
 
 export interface WizardInput {
