@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, Sparkles, Wand2, RefreshCw, Eye, Check } from 'lucide-react';
 import type { WizardFormData } from '@/lib/types';
+import { toast } from '@/components/ui/use-toast';
 
 interface WizardGenerationProps {
   formData: WizardFormData;
@@ -40,19 +41,46 @@ export const WizardGeneration = ({
   const handleGenerate = async () => {
     setIsGenerating(true);
     setGenerationStep(0);
-    
-    for (let i = 0; i < generationSteps.length; i++) {
-      setGenerationStep(i);
-      await new Promise(resolve => setTimeout(resolve, 2000));
+    setIsComplete(false);
+
+    let current = 0;
+    const interval = setInterval(() => {
+      current = (current + 1) % generationSteps.length;
+      setGenerationStep(current);
+    }, 2000);
+
+    try {
+      const res = await fetch('/api/generate-game', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      clearInterval(interval);
+
+      if (!res.ok) throw new Error('Failed to generate game');
+
+      const data = await res.json();
+      updateFormData({ generatedGame: true, generatedGameHtml: data.html });
+      setGenerationStep(generationSteps.length - 1);
+      setIsComplete(true);
+    } catch (err) {
+      clearInterval(interval);
+      console.error(err);
+      toast({
+        title: 'Erreur',
+        description: "La génération du jeu a échoué. Veuillez réessayer plus tard."
+      });
+      setGenerationStep(0);
+      setIsComplete(false);
+    } finally {
+      setIsGenerating(false);
     }
-    
-    setIsGenerating(false);
-    setIsComplete(true);
-    updateFormData({ generatedGame: true });
   };
 
   const handleRegenerate = () => {
     setIsComplete(false);
+    updateFormData({ generatedGameHtml: undefined, generatedGame: null });
     handleGenerate();
   };
 
@@ -131,13 +159,21 @@ export const WizardGeneration = ({
             {/* Preview Canvas */}
             <div className="order-2 lg:order-1">
               <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200/50">
-                <div 
+                <div
                   className="w-full aspect-square rounded-xl p-8 flex items-center justify-center relative overflow-hidden"
-                  style={{ 
-                    background: `linear-gradient(135deg, ${formData.primaryColor}, ${formData.secondaryColor})` 
+                  style={{
+                    background: `linear-gradient(135deg, ${formData.primaryColor}, ${formData.secondaryColor})`
                   }}
                 >
-                  {/* Game Preview based on selected mechanic */}
+                  {formData.generatedGameHtml ? (
+                    <iframe
+                      title="game-preview"
+                      srcDoc={formData.generatedGameHtml}
+                      className="absolute inset-0 w-full h-full border-none rounded-xl"
+                    />
+                  ) : (
+                    <>
+                      {/* Game Preview based on selected mechanic */}
                   {formData.mechanic === 'wheel' && (
                     <div className="relative">
                       <div className="w-48 h-48 rounded-full border-8 border-white/20 relative">
@@ -213,6 +249,8 @@ export const WizardGeneration = ({
                   {/* Floating particles */}
                   <div className="absolute top-8 right-8 w-2 h-2 bg-white/60 rounded-full animate-bounce"></div>
                   <div className="absolute bottom-8 left-8 w-1 h-1 bg-white/40 rounded-full animate-pulse delay-500"></div>
+                  </>
+                )}
                 </div>
               </div>
             </div>
