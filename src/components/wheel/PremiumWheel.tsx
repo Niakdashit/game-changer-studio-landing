@@ -10,8 +10,15 @@ interface PremiumWheelProps {
   accentColor?: string;
   logoUrl?: string;
   backgroundUrl?: string;
+  fallbackBackground?: string;
+  segmentColors?: string[];
   prizes?: string[];
   onSpin?: (result: string) => void;
+  /** Diameter of the wheel in pixels. If not provided, adapts to screen size */
+  size?: number;
+  /** Optional style keyword for future themes */
+  styleType?: string;
+  className?: string;
 }
 
 export const PremiumWheel = ({
@@ -22,6 +29,8 @@ export const PremiumWheel = ({
   accentColor = "#009de0",
   logoUrl,
   backgroundUrl,
+  fallbackBackground,
+  segmentColors,
   prizes = [
     "🍓 Fraise Tagada",
     "🐻 Ourson d'Or", 
@@ -33,23 +42,90 @@ export const PremiumWheel = ({
     "⭐ Bonus"
   ],
   onSpin
+  ,
+  size,
+  styleType,
+  className
 }: PremiumWheelProps) => {
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [winner, setWinner] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [wheelSize, setWheelSize] = useState<number>(size || 0);
   const wheelRef = useRef<HTMLDivElement>(null);
 
-  const segmentColors = [
+  const styleMap = {
+    Premium: {
+      font: "'Fredoka One', 'Comic Sans MS', cursive",
+      button: (pc: string, sc: string) =>
+        `linear-gradient(135deg, ${pc}, ${sc}, ${pc})`,
+      wheelShadow: (pc: string) =>
+        `0 0 60px ${pc}60, inset 0 0 20px rgba(255,255,255,0.2)`,
+      hideOverlays: false,
+      glass: false
+    },
+    Fun: {
+      font: "'Comic Neue', 'Comic Sans MS', cursive",
+      button: (pc: string, sc: string, ac: string) =>
+        `linear-gradient(135deg, ${ac}, ${sc}, ${pc})`,
+      wheelShadow: (pc: string) => `0 0 40px ${pc}80`,
+      hideOverlays: false,
+      glass: false
+    },
+    Minimal: {
+      font: "'Inter', sans-serif",
+      button: (pc: string) => pc,
+      wheelShadow: () => '0 0 20px rgba(0,0,0,0.1)',
+      hideOverlays: true,
+      glass: false
+    },
+    Bold: {
+      font: "'Impact', 'Arial Black', sans-serif",
+      button: (pc: string, sc: string) =>
+        `linear-gradient(135deg, ${pc}, ${pc} 60%, ${sc})`,
+      wheelShadow: (pc: string) => `0 0 50px ${pc}80`,
+      hideOverlays: false,
+      glass: false
+    },
+    Glass: {
+      font: "'Poppins', sans-serif",
+      button: (pc: string, sc: string) =>
+        `linear-gradient(135deg, ${pc}aa, ${sc}aa)`,
+      wheelShadow: (pc: string) =>
+        `0 0 30px ${pc}40, inset 0 0 30px rgba(255,255,255,0.3)`,
+      hideOverlays: false,
+      glass: true
+    }
+  } as const;
+
+  const currentStyle = styleMap[styleType as keyof typeof styleMap] ||
+    styleMap.Premium;
+
+  useEffect(() => {
+    if (size) {
+      setWheelSize(size);
+      return;
+    }
+    const compute = () => {
+      const width = window.innerWidth;
+      setWheelSize(width < 640 ? 320 : 384);
+    };
+    compute();
+    window.addEventListener('resize', compute);
+    return () => window.removeEventListener('resize', compute);
+  }, [size]);
+
+  const defaultColors = [
     primaryColor,
     secondaryColor,
     accentColor,
-    "#3ab54a",
-    "#ffffff",
-    primaryColor,
-    secondaryColor,
-    accentColor
+    '#3ab54a',
+    '#ffffff'
   ];
+
+  const wheelColors = Array.from({ length: prizes.length }, (_, i) =>
+    segmentColors?.[i] || defaultColors[i % defaultColors.length]
+  );
 
   const spinWheel = () => {
     if (isSpinning) return;
@@ -84,28 +160,34 @@ export const PremiumWheel = ({
         backgroundPosition: 'center'
       };
     }
-    
+
+    if (fallbackBackground) {
+      return { background: fallbackBackground };
+    }
+
     return {
       background: `radial-gradient(ellipse at center, ${secondaryColor}22, ${primaryColor}88, ${primaryColor})`
     };
   };
 
   return (
-    <div 
-      className="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden"
+    <div
+      className={`min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden ${className || ''} ${currentStyle.glass ? 'backdrop-blur-xl bg-white/20' : ''}`}
       style={getBackgroundStyle()}
     >
-      {/* Ambient lighting effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-yellow-400/10 to-transparent"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-yellow-300/20 via-transparent to-transparent"></div>
-      
-      {/* Noise texture overlay */}
-      <div 
-        className="absolute inset-0 opacity-20 mix-blend-multiply"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-        }}
-      ></div>
+      {/* Ambient lighting & noise */}
+      {!currentStyle.hideOverlays && (
+        <>
+          <div className="absolute inset-0 bg-gradient-to-br from-transparent via-yellow-400/10 to-transparent"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-yellow-300/20 via-transparent to-transparent"></div>
+          <div
+            className="absolute inset-0 opacity-20 mix-blend-multiply"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+            }}
+          ></div>
+        </>
+      )}
 
       {/* Brand header */}
       <div className="text-center mb-8 z-10">
@@ -114,21 +196,25 @@ export const PremiumWheel = ({
             <img src={logoUrl} alt={brandName} className="h-16 mx-auto drop-shadow-2xl" />
           </div>
         )}
-        <h1 
+        <h1
           className="text-5xl md:text-7xl font-black tracking-wider mb-2"
           style={{
             color: primaryColor,
-            textShadow: `0 6px 0 ${secondaryColor}, 0 12px 40px ${primaryColor}40`,
-            fontFamily: "'Fredoka One', 'Comic Sans MS', cursive"
+            textShadow:
+              styleType === 'Minimal'
+                ? 'none'
+                : `0 6px 0 ${secondaryColor}, 0 12px 40px ${primaryColor}40`,
+            fontFamily: currentStyle.font
           }}
         >
           {brandName}
         </h1>
-        <h2 
+        <h2
           className="text-2xl md:text-3xl font-bold tracking-wide"
           style={{
             color: accentColor,
-            textShadow: `0 3px 8px ${secondaryColor}60`
+            textShadow: styleType === 'Minimal' ? 'none' : `0 3px 8px ${secondaryColor}60`,
+            fontFamily: currentStyle.font
           }}
         >
           {gameTitle}
@@ -138,22 +224,26 @@ export const PremiumWheel = ({
       {/* Wheel container */}
       <div className="relative mb-12">
         {/* Glow background */}
-        <div 
-          className="absolute inset-0 rounded-full blur-3xl scale-110"
-          style={{
-            background: `radial-gradient(circle, ${secondaryColor}40, transparent 70%)`
-          }}
-        ></div>
+        {!currentStyle.hideOverlays && (
+          <div
+            className="absolute inset-0 rounded-full blur-3xl scale-110"
+            style={{
+              background: `radial-gradient(circle, ${secondaryColor}40, transparent 70%)`
+            }}
+          ></div>
+        )}
         
         {/* Wheel */}
         <motion.div
           ref={wheelRef}
-          className="relative w-80 h-80 md:w-96 md:h-96 rounded-full shadow-2xl"
+          className="relative rounded-full shadow-2xl"
           style={{
-            background: `conic-gradient(from 0deg, ${segmentColors.map((color, i) => 
-              `${color} ${(i * 360 / segmentColors.length)}deg ${((i + 1) * 360 / segmentColors.length)}deg`
-            ).join(', ')})`,
-            boxShadow: `0 0 60px ${primaryColor}60, inset 0 0 20px rgba(255,255,255,0.2)`
+            width: `${wheelSize}px`,
+            height: `${wheelSize}px`,
+            background: `conic-gradient(from 0deg, ${wheelColors
+              .map((color, i) => `${color} ${(i * 360 / wheelColors.length)}deg ${((i + 1) * 360 / wheelColors.length)}deg`)
+              .join(', ')})`,
+            boxShadow: currentStyle.wheelShadow(primaryColor)
           }}
           animate={{ rotate: rotation }}
           transition={{ 
@@ -175,9 +265,9 @@ export const PremiumWheel = ({
                   transformOrigin: 'center'
                 }}
               >
-                <div 
+                <div
                   className="absolute bg-black/20 rounded-lg px-2 py-1 backdrop-blur-sm"
-                  style={{ transform: 'translateY(-120px) rotate(-90deg)' }}
+                  style={{ transform: `translateY(-${wheelSize / 2 - 40}px) rotate(-90deg)` }}
                 >
                   {prize}
                 </div>
@@ -216,20 +306,20 @@ export const PremiumWheel = ({
       <motion.button
         onClick={spinWheel}
         disabled={isSpinning}
-        className="px-12 py-6 text-2xl font-black rounded-full text-white border-4 shadow-2xl relative overflow-hidden"
+        className={`px-12 py-6 text-2xl font-black rounded-full text-white border-4 shadow-2xl relative overflow-hidden ${currentStyle.glass ? 'backdrop-blur-lg bg-white/30' : ''}`}
         style={{
-          background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor}, ${primaryColor})`,
+          background: currentStyle.button(primaryColor, secondaryColor, accentColor),
           borderColor: secondaryColor,
           textShadow: '0 2px 4px rgba(0,0,0,0.5)',
-          fontFamily: "'Fredoka One', 'Comic Sans MS', cursive"
+          fontFamily: currentStyle.font
         }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        animate={isSpinning ? { 
+        animate={isSpinning ? {
           background: [
-            `linear-gradient(135deg, ${primaryColor}, ${secondaryColor}, ${primaryColor})`,
-            `linear-gradient(135deg, ${secondaryColor}, ${primaryColor}, ${secondaryColor})`,
-            `linear-gradient(135deg, ${primaryColor}, ${secondaryColor}, ${primaryColor})`
+            currentStyle.button(primaryColor, secondaryColor, accentColor),
+            currentStyle.button(secondaryColor, primaryColor, accentColor),
+            currentStyle.button(primaryColor, secondaryColor, accentColor)
           ]
         } : {}}
         transition={{ repeat: isSpinning ? Infinity : 0, duration: 0.8 }}
@@ -311,13 +401,13 @@ export const PremiumWheel = ({
                 key={i}
                 className="absolute w-3 h-3 rounded-full"
                 style={{
-                  background: segmentColors[i % segmentColors.length],
+                  background: wheelColors[i % wheelColors.length],
                   left: `${Math.random() * 100}%`,
                   top: '-10px'
                 }}
                 initial={{ y: -20, opacity: 1, rotate: 0 }}
                 animate={{ 
-                  y: window.innerHeight + 50, 
+                  y: (typeof document !== 'undefined' ? document.documentElement.clientHeight : 800) + 50,
                   opacity: 0,
                   rotate: 360 * 3
                 }}

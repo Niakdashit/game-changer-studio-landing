@@ -1,6 +1,7 @@
 
 export interface WizardFormData {
   logo: File | null;
+  logoUrl?: string | null;
   primaryColor: string;
   secondaryColor: string;
   accentColor?: string;
@@ -22,6 +23,10 @@ export interface WizardFormData {
   backgroundMobile?: File | null;
   backgroundDesktopUrl?: string | null;
   backgroundMobileUrl?: string | null;
+  segmentColors?: string[];
+  segmentCount?: number;
+  style?: string;
+  brandUrl?: string;
 }
 
 export interface WizardInput {
