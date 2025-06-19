@@ -72,17 +72,17 @@ export const WizardMecanique = ({ formData, updateFormData, onNext, onPrevious }
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 py-6 md:py-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 md:py-12">
         {/* Desktop Header */}
         <div className="hidden md:block text-center mb-12">
           <div className="inline-flex items-center bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
             <Sparkles className="mr-2 h-4 w-4" />
             Étape 2 sur 4
           </div>
-          <h1 className="text-4xl font-sora font-bold text-gray-900 mb-4">
+          <h1 className="text-3xl md:text-4xl font-sora font-bold text-gray-900 mb-4">
             Choix de la mécanique
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
             Sélectionnez le type de jeu qui correspond le mieux à vos objectifs
           </p>
         </div>
