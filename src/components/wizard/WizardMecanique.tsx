@@ -94,12 +94,13 @@ export const WizardMecanique = ({ formData, updateFormData, onNext, onPrevious }
             return (
               <div
                 key={mechanic.id}
-                className={`relative bg-white rounded-2xl p-6 border-2 cursor-pointer transition-all duration-300 hover:scale-102 hover:shadow-lg ${
+                className={`relative bg-white rounded-2xl p-6 border-2 cursor-pointer transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 active:scale-95 motion-safe:hover:[transform:rotateX(3deg)_rotateY(-3deg)_scale(1.02)] motion-safe:hover:animate-fade-scale ${
                   formData.mechanic === mechanic.id
                     ? 'border-primary shadow-lg shadow-primary/20 ring-4 ring-primary/10'
                     : 'border-gray-200 hover:border-primary/50'
                 }`}
                 onClick={() => handleMechanicSelect(mechanic.id)}
+                tabIndex={0}
               >
                 {/* Badge */}
                 <div className="absolute -top-3 left-4">
