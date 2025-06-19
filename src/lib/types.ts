@@ -22,6 +22,10 @@ export interface WizardFormData {
   backgroundMobile?: File | null;
   backgroundDesktopUrl?: string | null;
   backgroundMobileUrl?: string | null;
+  segmentColors?: string[];
+  segmentCount?: number;
+  style?: string;
+  brandUrl?: string;
 }
 
 export interface WizardInput {
