@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Monitor, Tablet, Smartphone, Save, Download, Share2, QrCode } from 'lucide-react';
@@ -47,6 +47,31 @@ export const WizardEditor = ({
     { id: 'link', label: 'Lien direct', icon: Share2, desc: 'Partagez sur vos réseaux' },
     { id: 'qr', label: 'QR code', icon: QrCode, desc: 'Pour vos supports print' }
   ];
+
+  useEffect(() => {
+    const updatePreview = async () => {
+      try {
+        const res = await fetch('/api/preview', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...formData,
+            gameTitle,
+            gameDescription
+          })
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.html) {
+          updateFormData({ generatedGameHtml: data.html });
+        }
+      } catch (err) {
+        console.error('Preview update failed', err);
+      }
+    };
+
+    updatePreview();
+  }, [formData.primaryColor, formData.secondaryColor, formData.mechanic, gameTitle, gameDescription]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5">
@@ -222,70 +247,77 @@ export const WizardEditor = ({
                   }}
                 >
                   {/* Game Preview */}
-                  <div 
-                    className="w-full h-full p-8 flex flex-col items-center justify-center relative"
-                    style={{ 
-                      background: `linear-gradient(135deg, ${formData.primaryColor}, ${formData.secondaryColor})` 
-                    }}
-                  >
-                    {/* Logo */}
-                    <div className="absolute top-4 left-4 w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center shadow-md">
-                      <div className="w-8 h-8 bg-gray-400 rounded"></div>
-                    </div>
-
-                    {/* Main Game Container */}
-                    <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 max-w-sm mx-auto text-center shadow-xl">
-                      {/* Game Title */}
-                      <h3 className="font-sora font-bold text-xl text-gray-900 mb-3">
-                        {gameTitle}
-                      </h3>
-                      <p className="font-inter text-gray-600 mb-6 text-sm leading-relaxed">
-                        {gameDescription}
-                      </p>
-
-                      {/* Game Mechanic Preview */}
-                      <div className="mb-6">
-                        {formData.mechanic === 'wheel' && (
-                          <div className="w-32 h-32 mx-auto rounded-full border-4 border-gray-200 flex items-center justify-center" style={{ borderColor: formData.primaryColor }}>
-                            <div className="w-16 h-16 rounded-full" style={{ backgroundColor: formData.primaryColor }}></div>
-                          </div>
-                        )}
-                        {formData.mechanic === 'quiz' && (
-                          <div className="space-y-2">
-                            <div className="h-8 bg-gray-100 rounded"></div>
-                            <div className="h-6 bg-gray-100 rounded"></div>
-                            <div className="h-6 bg-gray-100 rounded"></div>
-                          </div>
-                        )}
-                        {formData.mechanic === 'scratch' && (
-                          <div className="w-32 h-20 mx-auto bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center">
-                            <span className="text-white font-bold text-sm">Grattez !</span>
-                          </div>
-                        )}
-                        {formData.mechanic === 'jackpot' && (
-                          <div className="flex justify-center space-x-2">
-                            {[1,2,3].map(i => (
-                              <div key={i} className="w-8 h-12 bg-gray-800 rounded flex items-center justify-center">
-                                <span className="text-yellow-400 text-sm font-bold">7</span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                  {formData.generatedGameHtml ? (
+                    <div
+                      className="w-full h-full"
+                      dangerouslySetInnerHTML={{ __html: formData.generatedGameHtml }}
+                    />
+                  ) : (
+                    <div
+                      className="w-full h-full p-8 flex flex-col items-center justify-center relative"
+                      style={{
+                        background: `linear-gradient(135deg, ${formData.primaryColor}, ${formData.secondaryColor})`
+                      }}
+                    >
+                      {/* Logo */}
+                      <div className="absolute top-4 left-4 w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center shadow-md">
+                        <div className="w-8 h-8 bg-gray-400 rounded"></div>
                       </div>
 
-                      {/* CTA Button */}
-                      <button 
-                        className="w-full px-6 py-3 rounded-xl text-white font-semibold transition-all duration-250 hover:scale-105 shadow-lg"
-                        style={{ backgroundColor: formData.primaryColor }}
-                      >
-                        Jouer maintenant
-                      </button>
-                    </div>
+                      {/* Main Game Container */}
+                      <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 max-w-sm mx-auto text-center shadow-xl">
+                        {/* Game Title */}
+                        <h3 className="font-sora font-bold text-xl text-gray-900 mb-3">
+                          {gameTitle}
+                        </h3>
+                        <p className="font-inter text-gray-600 mb-6 text-sm leading-relaxed">
+                          {gameDescription}
+                        </p>
 
-                    {/* Floating Elements */}
-                    <div className="absolute top-8 right-8 w-2 h-2 bg-white/60 rounded-full animate-bounce"></div>
-                    <div className="absolute bottom-8 left-8 w-1 h-1 bg-white/40 rounded-full animate-pulse delay-500"></div>
-                  </div>
+                        {/* Game Mechanic Preview */}
+                        <div className="mb-6">
+                          {formData.mechanic === 'wheel' && (
+                            <div className="w-32 h-32 mx-auto rounded-full border-4 border-gray-200 flex items-center justify-center" style={{ borderColor: formData.primaryColor }}>
+                              <div className="w-16 h-16 rounded-full" style={{ backgroundColor: formData.primaryColor }}></div>
+                            </div>
+                          )}
+                          {formData.mechanic === 'quiz' && (
+                            <div className="space-y-2">
+                              <div className="h-8 bg-gray-100 rounded"></div>
+                              <div className="h-6 bg-gray-100 rounded"></div>
+                              <div className="h-6 bg-gray-100 rounded"></div>
+                            </div>
+                          )}
+                          {formData.mechanic === 'scratch' && (
+                            <div className="w-32 h-20 mx-auto bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center">
+                              <span className="text-white font-bold text-sm">Grattez !</span>
+                            </div>
+                          )}
+                          {formData.mechanic === 'jackpot' && (
+                            <div className="flex justify-center space-x-2">
+                              {[1,2,3].map(i => (
+                                <div key={i} className="w-8 h-12 bg-gray-800 rounded flex items-center justify-center">
+                                  <span className="text-yellow-400 text-sm font-bold">7</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* CTA Button */}
+                        <button
+                          className="w-full px-6 py-3 rounded-xl text-white font-semibold transition-all duration-250 hover:scale-105 shadow-lg"
+                          style={{ backgroundColor: formData.primaryColor }}
+                        >
+                          Jouer maintenant
+                        </button>
+                      </div>
+
+                      {/* Floating Elements */}
+                      <div className="absolute top-8 right-8 w-2 h-2 bg-white/60 rounded-full animate-bounce"></div>
+                      <div className="absolute bottom-8 left-8 w-1 h-1 bg-white/40 rounded-full animate-pulse delay-500"></div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
