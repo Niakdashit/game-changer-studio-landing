@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { PremiumWheel } from './PremiumWheel';
 import type { WizardFormData } from '@/lib/types';
@@ -34,10 +33,10 @@ export const WheelWrapper = ({ formData, onResult }: WheelWrapperProps) => {
   const fallbackBackground = !backgroundUrl
     ? `linear-gradient(135deg, ${formData.primaryColor}20, ${formData.secondaryColor}40, ${(formData.accentColor || formData.primaryColor)}20)`
     : undefined;
-  
+
   // Filter out empty prizes
   const validPrizes = formData.prizes?.filter(prize => prize.trim()) || [];
-  
+
   return (
     <PremiumWheel
       brandName={formData.productName || 'Votre Marque'}
