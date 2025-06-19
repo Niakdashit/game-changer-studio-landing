@@ -12,7 +12,6 @@ interface BrandSettingsFormProps {
 
 export const BrandSettingsForm = ({ formData, updateFormData }: BrandSettingsFormProps) => {
   const segmentCount = formData.segmentCount || 6;
-
   const lastFetched = useRef<string | null>(null);
 
   useEffect(() => {
@@ -26,6 +25,7 @@ export const BrandSettingsForm = ({ formData, updateFormData }: BrandSettingsFor
     }
   }, [segmentCount]);
 
+  // Auto-fetch brand colors from Brandfetch if brandUrl is filled
   useEffect(() => {
     const fetchColors = async () => {
       if (!formData.brandUrl) return;
@@ -66,6 +66,7 @@ export const BrandSettingsForm = ({ formData, updateFormData }: BrandSettingsFor
     fetchColors();
   }, [formData.brandUrl, segmentCount]);
 
+  // Handle file upload + preview URL (logo, desktop, mobile backgrounds)
   const handleFile = (
     field: 'logo' | 'backgroundDesktop' | 'backgroundMobile'
   ) => (e: React.ChangeEvent<HTMLInputElement>) => {
