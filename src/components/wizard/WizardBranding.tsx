@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -38,6 +38,55 @@ export const WizardBranding = ({ formData, updateFormData, onNext }: WizardBrand
   const audiences = ["Jeunes actifs", "Seniors", "Parents", "Professionnels", "Fans de la marque"];
   const colorSuggestions = ["#FFD700", "#7E5BEC", "#4ECCA3", "#FF686B", "#FF9500", "#34D399"];
 
+  const extractColorsFromImage = useCallback((file: File) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx?.drawImage(img, 0, 0);
+      
+      const imageData = ctx?.getImageData(0, 0, canvas.width, canvas.height);
+      if (!imageData) return;
+      
+      const data = imageData.data;
+      const colorMap = new Map<string, number>();
+      
+      // Sample pixels to extract dominant colors
+      for (let i = 0; i < data.length; i += 4 * 10) { // Sample every 10th pixel
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        const a = data[i + 3];
+        
+        // Skip transparent or very light/dark pixels
+        if (a < 128 || (r > 240 && g > 240 && b > 240) || (r < 15 && g < 15 && b < 15)) continue;
+        
+        const hex = `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+        colorMap.set(hex, (colorMap.get(hex) || 0) + 1);
+      }
+      
+      // Get the two most frequent colors
+      const sortedColors = Array.from(colorMap.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 2);
+      
+      if (sortedColors.length > 0) {
+        const primaryColor = sortedColors[0][0];
+        const secondaryColor = sortedColors[1]?.[0] || primaryColor;
+        
+        updateFormData({
+          primaryColor,
+          secondaryColor
+        });
+      }
+    };
+    
+    img.src = URL.createObjectURL(file);
+  }, [updateFormData]);
+
   const handleObjectiveToggle = (objective: string) => {
     const newObjectives = objectives.includes(objective) 
       ? objectives.filter(o => o !== objective)
@@ -68,6 +117,8 @@ export const WizardBranding = ({ formData, updateFormData, onNext }: WizardBrand
     const file = event.target.files?.[0];
     if (file) {
       updateFormData({ logo: file });
+      // Extract colors from the uploaded logo
+      extractColorsFromImage(file);
     }
   };
 
@@ -128,13 +179,14 @@ export const WizardBranding = ({ formData, updateFormData, onNext }: WizardBrand
                       <Check className="h-6 w-6" />
                     </div>
                     <p className="font-semibold">{formData.logo.name}</p>
-                    <p className="text-sm text-gray-600 mt-1">Fichier téléchargé avec succès</p>
+                    <p className="text-sm text-gray-600 mt-1">Couleurs extraites automatiquement</p>
                   </div>
                 ) : (
                   <div className="text-gray-500">
                     <Upload className="mx-auto h-10 w-10 mb-3" />
                     <p className="font-medium">Glissez votre logo ici</p>
                     <p className="text-sm mt-1">PNG, JPG, SVG jusqu'à 10 Mo</p>
+                    <p className="text-xs mt-2 text-primary">Les couleurs seront extraites automatiquement</p>
                   </div>
                 )}
               </div>
@@ -146,6 +198,11 @@ export const WizardBranding = ({ formData, updateFormData, onNext }: WizardBrand
             <Label className="text-lg font-sora font-semibold text-gray-900 mb-4 flex items-center">
               <Palette className="mr-3 h-5 w-5 text-primary" />
               Couleurs principales
+              {formData.logo && (
+                <span className="ml-2 text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                  Extraites du logo
+                </span>
+              )}
             </Label>
             
             {/* Color suggestions */}
@@ -311,7 +368,6 @@ export const WizardBranding = ({ formData, updateFormData, onNext }: WizardBrand
       {/* Mobile Sticky Preview */}
       <MiniGameMockup formData={{ ...formData, brandTone, objectives, audience, productName }} />
 
-      {/* Mobile Sticky CTA */}
       <div className="fixed bottom-20 left-4 right-4 md:hidden">
         <Button
           onClick={onNext}
