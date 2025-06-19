@@ -1,42 +1,74 @@
-export interface WizardFormData {
-  logo: File | null;
-  primaryColor: string;
-  secondaryColor: string;
-  brief: string;
-  mechanic: string;
-  generatedGame: boolean | null;
-  /**
-   * Raw HTML returned by the generation API. When present, the preview can
-   * display the fully generated game.
-   */
-  generatedGameHtml?: string;
-  brandTone?: string;
-  objectives?: string[];
-  audience?: string[];
-  productName?: string;
-}
+import { useState } from 'react';
+import { Navigation } from '@/components/Navigation';
+import { Footer } from '@/components/Footer';
+import { WizardBranding } from '@/components/wizard/WizardBranding';
+import { WizardMecanique } from '@/components/wizard/WizardMecanique';
+import { WizardGeneration } from '@/components/wizard/WizardGeneration';
+import { WizardEditor } from '@/components/wizard/WizardEditor';
+import type { WizardFormData } from '@/lib/types';
 
-export interface WizardInput {
-  type: 'file-upload' | 'color-picker' | 'select' | 'checkbox' | 'chips' | 'text';
-  label: string;
-  required?: boolean;
-  accept?: string[];
-  allowMultiple?: boolean;
-  max?: number;
-  options?: string[];
-  placeholder?: string;
-  preview?: boolean;
-  feedbackText?: string;
-  showPreviewBlock?: boolean;
-  suggestions?: string[];
-}
+const Wizard = () => {
+  const [step, setStep] = useState(0);
+  const [formData, setFormData] = useState<WizardFormData>({
+    logo: null,
+    primaryColor: '#000000',
+    secondaryColor: '#ffffff',
+    brief: '',
+    mechanic: '',
+    generatedGame: null,
+    brandTone: '',
+    objectives: [],
+    audience: [],
+    productName: ''
+  });
 
-export interface WizardStep {
-  title: string;
-  description: string;
-  inputs?: WizardInput[];
-  type?: string;
-  options?: Record<string, unknown>;
-  mobilePreviewSticky?: boolean;
-  previewComponent?: string;
-}
+  const updateFormData = (data: Partial<WizardFormData>) =>
+    setFormData(prev => ({ ...prev, ...data }));
+
+  const next = () => setStep(s => Math.min(s + 1, 3));
+  const previous = () => setStep(s => Math.max(s - 1, 0));
+
+  return (
+    <div className="min-h-screen bg-gray-light">
+      <Navigation />
+      {step === 0 && (
+        <WizardBranding
+          formData={formData}
+          updateFormData={updateFormData}
+          onNext={next}
+          currentStep={step}
+        />
+      )}
+      {step === 1 && (
+        <WizardMecanique
+          formData={formData}
+          updateFormData={updateFormData}
+          onNext={next}
+          onPrevious={previous}
+          currentStep={step}
+        />
+      )}
+      {step === 2 && (
+        <WizardGeneration
+          formData={formData}
+          updateFormData={updateFormData}
+          onNext={next}
+          onPrevious={previous}
+          currentStep={step}
+        />
+      )}
+      {step === 3 && (
+        <WizardEditor
+          formData={formData}
+          updateFormData={updateFormData}
+          onPrevious={previous}
+          currentStep={step}
+          isLastStep
+        />
+      )}
+      <Footer />
+    </div>
+  );
+};
+
+export default Wizard;
