@@ -1,4 +1,3 @@
-
 export interface WizardFormData {
   logo: File | null;
   primaryColor: string;
