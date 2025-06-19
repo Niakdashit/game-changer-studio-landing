@@ -80,7 +80,7 @@ export const WizardEditor = ({
     };
 
     updatePreview();
-  }, [formData.primaryColor, formData.secondaryColor, formData.mechanic, gameTitle, gameDescription]);
+  }, [formData, gameTitle, gameDescription, updateFormData]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5">
