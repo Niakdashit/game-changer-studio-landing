@@ -2,7 +2,16 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Monitor, Tablet, Smartphone, Save, Download, Share2, QrCode } from 'lucide-react';
+import {
+  ArrowLeft,
+  Monitor,
+  DeviceTablet as Tablet,
+  DeviceMobile as Smartphone,
+  FloppyDisk as Save,
+  Download,
+  ShareNetwork,
+  QrCode
+} from '@phosphor-icons/react';
 import type { WizardFormData } from '@/lib/types';
 
 interface WizardEditorProps {
@@ -44,7 +53,7 @@ export const WizardEditor = ({
 
   const exportOptions = [
     { id: 'iframe', label: 'Code iframe', icon: Monitor, desc: 'Intégrez sur votre site web' },
-    { id: 'link', label: 'Lien direct', icon: Share2, desc: 'Partagez sur vos réseaux' },
+    { id: 'link', label: 'Lien direct', icon: ShareNetwork, desc: 'Partagez sur vos réseaux' },
     { id: 'qr', label: 'QR code', icon: QrCode, desc: 'Pour vos supports print' }
   ];
 

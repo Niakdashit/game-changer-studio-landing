@@ -1,6 +1,13 @@
 
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Zap, Brain, Sparkles, Coins } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Lightning,
+  Brain as PhBrain,
+  Sparkle as PhSparkle,
+  Coins
+} from '@phosphor-icons/react';
 import type { WizardFormData } from '@/lib/types';
 
 interface WizardMecaniqueProps {
@@ -16,7 +23,7 @@ const mechanics = [
     id: 'wheel',
     title: 'Roue de la Fortune',
     description: 'Faites tourner la chance ! Une mécanique simple, visuelle et très engageante.',
-    icon: Sparkles,
+    icon: PhSparkle,
     badge: 'Plus populaire',
     color: 'from-yellow-400 to-orange-500',
     benefits: ['Engagement viral', 'Simple à comprendre', 'Visuel attractif']
@@ -25,7 +32,7 @@ const mechanics = [
     id: 'quiz',
     title: 'Quiz Interactif',
     description: 'Testez les connaissances ou guidez vers une recommandation personnalisée.',
-    icon: Brain,
+    icon: PhBrain,
     badge: 'Meilleur pour leads',
     color: 'from-blue-400 to-purple-500',
     benefits: ['Collecte de données', 'Personnalisation', 'Éducatif']
@@ -34,7 +41,7 @@ const mechanics = [
     id: 'scratch',
     title: 'Carte à Gratter',
     description: 'Une mécanique tactile et rapide, idéale pour l\'instant gagnant.',
-    icon: Zap,
+    icon: Lightning,
     badge: 'Conversion rapide',
     color: 'from-green-400 to-teal-500',
     benefits: ['Instant gratifiant', 'Mobile-friendly', 'Taux de conversion élevé']
@@ -76,7 +83,7 @@ export const WizardMecanique = ({ formData, updateFormData, onNext, onPrevious }
         {/* Desktop Header */}
         <div className="hidden md:block text-center mb-12">
           <div className="inline-flex items-center bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
-            <Sparkles className="mr-2 h-4 w-4" />
+            <PhSparkle className="mr-2 h-4 w-4" />
             Étape 2 sur 4
           </div>
           <h1 className="text-3xl md:text-4xl font-sora font-bold text-gray-900 mb-4">

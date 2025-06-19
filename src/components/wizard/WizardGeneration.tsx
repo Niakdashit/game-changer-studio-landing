@@ -2,7 +2,15 @@ import { useState, useEffect } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, ArrowRight, Sparkles, Wand2, RefreshCw, Eye, Check } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Sparkle as PhSparkle,
+  MagicWand,
+  ArrowsClockwise,
+  Eye,
+  Check
+} from '@phosphor-icons/react';
 import type { WizardFormData } from '@/lib/types';
 import { toast } from '@/components/ui/use-toast';
 
@@ -106,7 +114,7 @@ export const WizardGeneration = ({
         {/* Desktop Header */}
         <div className="hidden md:block text-center mb-12">
           <div className="inline-flex items-center bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
-            <Wand2 className="mr-2 h-4 w-4" />
+            <MagicWand className="mr-2 h-4 w-4" />
             Étape 3 sur 4
           </div>
           <h1 className="text-4xl font-sora font-bold text-gray-900 mb-4">
@@ -123,7 +131,7 @@ export const WizardGeneration = ({
             <div className="w-24 h-24 mx-auto mb-8 relative">
               <div className="absolute inset-0 rounded-full border-4 border-primary/20"></div>
               <div className={`absolute inset-0 rounded-full border-4 border-primary border-t-transparent ${shouldReduceMotion ? '' : 'animate-spin'}`}></div>
-              <Sparkles className={`absolute inset-0 m-auto h-8 w-8 text-primary ${shouldReduceMotion ? '' : 'animate-pulse'}`} />
+              <PhSparkle className={`absolute inset-0 m-auto h-8 w-8 text-primary ${shouldReduceMotion ? '' : 'animate-pulse'}`} />
             </div>
 
             <h3 className="text-2xl md:text-3xl font-sora font-bold text-gray-900 mb-4">
@@ -311,7 +319,7 @@ export const WizardGeneration = ({
                   size="lg"
                   className="flex-1 font-semibold hover:scale-105 transition-transform"
                 >
-                  <RefreshCw className="mr-2 h-4 w-4" />
+                  <ArrowsClockwise className="mr-2 h-4 w-4" />
                   Regénérer
                 </Button>
                 <Button

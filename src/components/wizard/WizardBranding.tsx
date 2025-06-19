@@ -3,7 +3,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { ArrowRight, Upload, Palette, Target, Users, Sparkles, Check } from 'lucide-react';
+import {
+  ArrowRight,
+  Upload,
+  Palette,
+  Target,
+  Users,
+  Sparkle as PhSparkle,
+  Check
+} from '@phosphor-icons/react';
 import { MiniGameMockup } from './MiniGameMockup';
 import type { WizardFormData } from '@/lib/types';
 
@@ -148,7 +156,7 @@ export const WizardBranding = ({ formData, updateFormData, onNext }: WizardBrand
         {/* Desktop Header */}
         <div className="hidden md:block text-center mb-12">
           <div className="inline-flex items-center bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
-            <Sparkles className="mr-2 h-4 w-4" />
+            <PhSparkle className="mr-2 h-4 w-4" />
             Étape 1 sur 4
           </div>
           <h1 className="text-3xl md:text-4xl font-sora font-bold text-gray-900 mb-4">
