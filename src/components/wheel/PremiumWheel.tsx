@@ -10,6 +10,7 @@ interface PremiumWheelProps {
   accentColor?: string;
   logoUrl?: string;
   backgroundUrl?: string;
+  fallbackBackground?: string;
   prizes?: string[];
   onSpin?: (result: string) => void;
 }
@@ -22,6 +23,7 @@ export const PremiumWheel = ({
   accentColor = "#009de0",
   logoUrl,
   backgroundUrl,
+  fallbackBackground,
   prizes = [
     "🍓 Fraise Tagada",
     "🐻 Ourson d'Or", 
@@ -84,7 +86,11 @@ export const PremiumWheel = ({
         backgroundPosition: 'center'
       };
     }
-    
+
+    if (fallbackBackground) {
+      return { background: fallbackBackground };
+    }
+
     return {
       background: `radial-gradient(ellipse at center, ${secondaryColor}22, ${primaryColor}88, ${primaryColor})`
     };
