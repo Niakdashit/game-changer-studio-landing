@@ -1,3 +1,4 @@
+
 export interface WizardFormData {
   logo: File | null;
   primaryColor: string;
@@ -5,4 +6,8 @@ export interface WizardFormData {
   brief: string;
   mechanic: string;
   generatedGame: boolean | null;
+  brandTone?: string;
+  objectives?: string[];
+  audience?: string[];
+  productName?: string;
 }

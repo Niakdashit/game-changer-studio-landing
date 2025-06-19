@@ -1,9 +1,11 @@
 
-import { useState, useRef } from 'react';
-import { Upload, Palette } from 'lucide-react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { ArrowRight, Upload, Palette, Target, Users, Sparkles } from 'lucide-react';
 import type { WizardFormData } from '@/lib/types';
 
 interface WizardBrandingProps {
@@ -14,171 +16,244 @@ interface WizardBrandingProps {
 }
 
 export const WizardBranding = ({ formData, updateFormData, onNext }: WizardBrandingProps) => {
-  const [isDragging, setIsDragging] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [brandTone, setBrandTone] = useState('');
+  const [objectives, setObjectives] = useState<string[]>([]);
+  const [audience, setAudience] = useState<string[]>([]);
+  const [productName, setProductName] = useState('');
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
+  const brandTones = ["Sérieux", "Fun & engageant", "Élégant & raffiné", "Familial"];
+  const campaignObjectives = [
+    "Collecte d'emails",
+    "Trafic en point de vente", 
+    "Valorisation de marque",
+    "Fidélisation"
+  ];
+  const audiences = ["Jeunes actifs", "Seniors", "Parents", "Professionnels", "Fans de la marque"];
+
+  const handleObjectiveToggle = (objective: string) => {
+    setObjectives(prev => 
+      prev.includes(objective) 
+        ? prev.filter(o => o !== objective)
+        : [...prev, objective]
+    );
   };
 
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
+  const handleAudienceToggle = (aud: string) => {
+    setAudience(prev => 
+      prev.includes(aud) 
+        ? prev.filter(a => a !== aud)
+        : [...prev, aud]
+    );
   };
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const files = e.dataTransfer.files;
-    if (files[0]) {
-      updateFormData({ logo: files[0] });
-    }
-  };
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) {
       updateFormData({ logo: file });
     }
   };
 
-  const isValid = formData.brief.length >= 20;
+  const isValid = formData.logo && brandTone && objectives.length > 0;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="bg-white/75 backdrop-blur-12 rounded-2xl p-8 shadow-lg border border-gray-200/50">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-sora font-bold text-gray-warm mb-4">
-            Brief & Branding
-          </h2>
-          <p className="text-lg font-inter text-gray-600 max-w-2xl mx-auto">
-            Définissez l'identité visuelle et le brief de votre jeu interactif
-          </p>
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="bg-white/85 backdrop-blur-16 rounded-3xl shadow-2xl border border-gray-200/30 overflow-hidden">
+        {/* Header avec animation */}
+        <div className="relative px-8 py-8 bg-gradient-to-br from-primary/5 via-primary-light/10 to-transparent">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-50"></div>
+          <div className="relative">
+            <div className="flex items-center mb-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary-light rounded-xl flex items-center justify-center mr-4">
+                <Sparkles className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <span className="text-sm font-inter font-medium text-primary mb-1 block">Étape 1 sur 4</span>
+                <h2 className="text-3xl font-sora font-bold text-gray-warm">
+                  Votre identité de marque
+                </h2>
+              </div>
+            </div>
+            <p className="text-lg font-inter text-gray-600 max-w-2xl">
+              Définissons ensemble les bases créatives qui rendront votre jeu unique et mémorable.
+            </p>
+          </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          {/* Logo Upload */}
-          <div className="space-y-4">
-            <Label className="text-lg font-inter font-semibold text-gray-warm">
-              Logo de votre marque
+        <div className="px-8 py-8 space-y-8">
+          {/* Upload Logo Premium */}
+          <div className="space-y-3">
+            <Label className="text-base font-inter font-semibold text-gray-700 flex items-center">
+              <Upload className="mr-2 h-5 w-5 text-primary" />
+              Logo de votre marque *
             </Label>
-            <div
-              className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-250 cursor-pointer hover:border-primary/50 ${
-                isDragging ? 'border-primary bg-primary/5' : 'border-gray-300'
-              }`}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-              onClick={() => fileInputRef.current?.click()}
-            >
+            <div className="relative">
               <input
-                ref={fileInputRef}
                 type="file"
-                accept="image/*"
-                onChange={handleFileSelect}
-                className="hidden"
+                accept=".png,.jpg,.jpeg,.svg"
+                onChange={handleFileUpload}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
               />
-              <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              <p className="font-inter text-gray-600 mb-2">
-                Glissez votre logo ici ou cliquez pour sélectionner
-              </p>
-              <p className="text-sm text-gray-500">
-                PNG, JPG jusqu'à 5MB
-              </p>
-              {formData.logo && (
-                <div className="mt-4 p-3 bg-primary/10 rounded-lg">
-                  <p className="text-sm font-medium text-primary">
-                    ✓ {formData.logo.name}
-                  </p>
-                </div>
-              )}
+              <div className={`border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-300 hover:border-primary/50 hover:bg-primary/5 ${
+                formData.logo ? 'border-primary bg-primary/10' : 'border-gray-300'
+              }`}>
+                {formData.logo ? (
+                  <div className="text-primary">
+                    <Upload className="mx-auto h-8 w-8 mb-3" />
+                    <p className="font-inter font-medium">{formData.logo.name}</p>
+                    <p className="text-sm text-gray-600 mt-1">Fichier uploadé avec succès</p>
+                  </div>
+                ) : (
+                  <div className="text-gray-500">
+                    <Upload className="mx-auto h-8 w-8 mb-3" />
+                    <p className="font-inter font-medium">Glissez votre logo ici</p>
+                    <p className="text-sm mt-1">PNG, JPG, SVG jusqu'à 10MB</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Color Pickers */}
-          <div className="space-y-6">
-            <div>
-              <Label className="text-lg font-inter font-semibold text-gray-warm mb-4 block">
-                Couleurs de marque
-              </Label>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-4">
-                  <Label className="font-inter text-gray-600 w-24">Primaire</Label>
-                  <div className="flex items-center space-x-3">
-                    <input
-                      type="color"
-                      value={formData.primaryColor}
+          {/* Couleurs avec preview */}
+          <div className="space-y-4">
+            <Label className="text-base font-inter font-semibold text-gray-700 flex items-center">
+              <Palette className="mr-2 h-5 w-5 text-primary" />
+              Couleurs principales
+            </Label>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <Label className="text-sm font-inter text-gray-600 mb-2 block">Couleur primaire</Label>
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="color"
+                    value={formData.primaryColor}
+                    onChange={(e) => updateFormData({ primaryColor: e.target.value })}
+                    className="w-12 h-12 rounded-xl border-2 border-gray-200 cursor-pointer hover:scale-105 transition-transform"
+                  />
+                  <div className="flex-1">
+                    <Input 
+                      value={formData.primaryColor} 
                       onChange={(e) => updateFormData({ primaryColor: e.target.value })}
-                      className="w-12 h-12 rounded-lg border border-gray-300 cursor-pointer"
+                      className="font-mono"
                     />
-                    <span className="font-inter text-sm text-gray-600 font-mono">
-                      {formData.primaryColor}
-                    </span>
                   </div>
                 </div>
-                <div className="flex items-center space-x-4">
-                  <Label className="font-inter text-gray-600 w-24">Secondaire</Label>
-                  <div className="flex items-center space-x-3">
-                    <input
-                      type="color"
-                      value={formData.secondaryColor}
+              </div>
+              <div>
+                <Label className="text-sm font-inter text-gray-600 mb-2 block">Couleur secondaire</Label>
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="color"
+                    value={formData.secondaryColor}
+                    onChange={(e) => updateFormData({ secondaryColor: e.target.value })}
+                    className="w-12 h-12 rounded-xl border-2 border-gray-200 cursor-pointer hover:scale-105 transition-transform"
+                  />
+                  <div className="flex-1">
+                    <Input 
+                      value={formData.secondaryColor} 
                       onChange={(e) => updateFormData({ secondaryColor: e.target.value })}
-                      className="w-12 h-12 rounded-lg border border-gray-300 cursor-pointer"
+                      className="font-mono"
                     />
-                    <span className="font-inter text-sm text-gray-600 font-mono">
-                      {formData.secondaryColor}
-                    </span>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Live Preview */}
-            <div className="p-4 rounded-xl border border-gray-200 bg-gradient-to-r"
-                 style={{ 
-                   backgroundImage: `linear-gradient(45deg, ${formData.primaryColor}, ${formData.secondaryColor})` 
-                 }}>
-              <div className="bg-white/90 backdrop-blur-12 rounded-lg p-4 text-center">
-                <Palette className="mx-auto h-8 w-8 mb-2" style={{ color: formData.primaryColor }} />
-                <p className="font-inter font-semibold" style={{ color: formData.primaryColor }}>
-                  Aperçu live
-                </p>
+          {/* Ton de marque */}
+          <div className="space-y-4">
+            <Label className="text-base font-inter font-semibold text-gray-700">
+              Quel est le ton de votre marque ? *
+            </Label>
+            <RadioGroup value={brandTone} onValueChange={setBrandTone}>
+              <div className="grid md:grid-cols-2 gap-3">
+                {brandTones.map((tone) => (
+                  <div key={tone} className="flex items-center space-x-3 p-4 rounded-xl border-2 transition-all hover:border-primary/30 hover:bg-primary/5">
+                    <RadioGroupItem value={tone} id={tone} />
+                    <Label htmlFor={tone} className="font-inter cursor-pointer flex-1">{tone}</Label>
+                  </div>
+                ))}
               </div>
+            </RadioGroup>
+          </div>
+
+          {/* Objectifs campagne */}
+          <div className="space-y-4">
+            <Label className="text-base font-inter font-semibold text-gray-700 flex items-center">
+              <Target className="mr-2 h-5 w-5 text-primary" />
+              Objectifs de votre campagne *
+            </Label>
+            <div className="grid md:grid-cols-2 gap-3">
+              {campaignObjectives.map((objective) => (
+                <button
+                  key={objective}
+                  onClick={() => handleObjectiveToggle(objective)}
+                  className={`p-4 rounded-xl border-2 text-left transition-all hover:scale-102 ${
+                    objectives.includes(objective)
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-gray-200 hover:border-primary/30 hover:bg-primary/5'
+                  }`}
+                >
+                  <span className="font-inter font-medium">{objective}</span>
+                </button>
+              ))}
             </div>
           </div>
-        </div>
 
-        {/* Brief IA */}
-        <div className="mt-8 space-y-4">
-          <Label className="text-lg font-inter font-semibold text-gray-warm">
-            Brief IA (minimum 20 caractères)
-          </Label>
-          <Textarea
-            placeholder="Ex: Jeu concours pour le lancement de notre nouvelle collection automne. Cible : femmes 25-45 ans passionnées de mode. Objectif : collecter 1000 emails qualifiés. Ton décontracté et premium."
-            value={formData.brief}
-            onChange={(e) => updateFormData({ brief: e.target.value })}
-            className="min-h-[120px] font-inter resize-none"
-            maxLength={300}
-          />
-          <div className="flex justify-between text-sm text-gray-500">
-            <span>{formData.brief.length}/300 caractères</span>
-            <span className={formData.brief.length >= 20 ? 'text-green-600' : 'text-red-500'}>
-              {formData.brief.length >= 20 ? '✓ Brief suffisant' : 'Brief trop court'}
-            </span>
+          {/* Audience */}
+          <div className="space-y-4">
+            <Label className="text-base font-inter font-semibold text-gray-700 flex items-center">
+              <Users className="mr-2 h-5 w-5 text-primary" />
+              Votre audience principale
+            </Label>
+            <div className="flex flex-wrap gap-2">
+              {audiences.map((aud) => (
+                <button
+                  key={aud}
+                  onClick={() => handleAudienceToggle(aud)}
+                  className={`px-4 py-2 rounded-full text-sm font-inter font-medium transition-all hover:scale-105 ${
+                    audience.includes(aud)
+                      ? 'bg-primary text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-primary/10 hover:text-primary'
+                  }`}
+                >
+                  {aud}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Produit à mettre en avant */}
+          <div className="space-y-3">
+            <Label className="text-base font-inter font-semibold text-gray-700">
+              Nom ou produit à mettre en avant
+            </Label>
+            <Input
+              value={productName}
+              onChange={(e) => setProductName(e.target.value)}
+              placeholder="Ex : Tablette Facilotab Nomad 4G"
+              className="text-base p-4 rounded-xl"
+            />
           </div>
         </div>
 
-        {/* CTA */}
-        <div className="mt-8 flex justify-end">
-          <Button
-            onClick={onNext}
-            disabled={!isValid}
-            size="lg"
-            className="bg-gradient-to-r from-primary to-primary-light text-white font-inter font-semibold px-8 hover:scale-104 transition-all duration-250"
-          >
-            Continuer
-          </Button>
+        {/* Navigation Footer */}
+        <div className="px-8 py-6 bg-gray-50/50 border-t border-gray-200/50">
+          <div className="flex justify-end">
+            <Button
+              onClick={onNext}
+              disabled={!isValid}
+              size="lg"
+              className="bg-gradient-to-r from-primary to-primary-light text-white font-inter font-semibold px-8 hover:scale-104 transition-all duration-250 disabled:opacity-50"
+            >
+              Continuer
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
+          {!isValid && (
+            <p className="text-sm text-gray-500 mt-3 text-right">
+              Veuillez remplir les champs obligatoires (*)
+            </p>
+          )}
         </div>
       </div>
     </div>
