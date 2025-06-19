@@ -6,6 +6,11 @@ export interface WizardFormData {
   brief: string;
   mechanic: string;
   generatedGame: boolean | null;
+  /**
+   * Raw HTML returned by the generation API. When present the preview can
+   * display the fully generated game.
+   */
+  generatedGameHtml?: string;
   brandTone?: string;
   objectives?: string[];
   audience?: string[];
