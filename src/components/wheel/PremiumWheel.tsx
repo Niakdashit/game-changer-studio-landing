@@ -10,6 +10,8 @@ interface PremiumWheelProps {
   accentColor?: string;
   logoUrl?: string;
   backgroundUrl?: string;
+  fallbackBackground?: string;
+  segmentColors?: string[];
   prizes?: string[];
   onSpin?: (result: string) => void;
 }
@@ -22,6 +24,8 @@ export const PremiumWheel = ({
   accentColor = "#009de0",
   logoUrl,
   backgroundUrl,
+  fallbackBackground,
+  segmentColors,
   prizes = [
     "🍓 Fraise Tagada",
     "🐻 Ourson d'Or", 
@@ -40,16 +44,17 @@ export const PremiumWheel = ({
   const [showConfetti, setShowConfetti] = useState(false);
   const wheelRef = useRef<HTMLDivElement>(null);
 
-  const segmentColors = [
+  const defaultColors = [
     primaryColor,
     secondaryColor,
     accentColor,
-    "#3ab54a",
-    "#ffffff",
-    primaryColor,
-    secondaryColor,
-    accentColor
+    '#3ab54a',
+    '#ffffff'
   ];
+
+  const wheelColors = Array.from({ length: prizes.length }, (_, i) =>
+    segmentColors?.[i] || defaultColors[i % defaultColors.length]
+  );
 
   const spinWheel = () => {
     if (isSpinning) return;
@@ -84,7 +89,11 @@ export const PremiumWheel = ({
         backgroundPosition: 'center'
       };
     }
-    
+
+    if (fallbackBackground) {
+      return { background: fallbackBackground };
+    }
+
     return {
       background: `radial-gradient(ellipse at center, ${secondaryColor}22, ${primaryColor}88, ${primaryColor})`
     };
@@ -150,9 +159,9 @@ export const PremiumWheel = ({
           ref={wheelRef}
           className="relative w-80 h-80 md:w-96 md:h-96 rounded-full shadow-2xl"
           style={{
-            background: `conic-gradient(from 0deg, ${segmentColors.map((color, i) => 
-              `${color} ${(i * 360 / segmentColors.length)}deg ${((i + 1) * 360 / segmentColors.length)}deg`
-            ).join(', ')})`,
+            background: `conic-gradient(from 0deg, ${wheelColors
+              .map((color, i) => `${color} ${(i * 360 / wheelColors.length)}deg ${((i + 1) * 360 / wheelColors.length)}deg`)
+              .join(', ')})`,
             boxShadow: `0 0 60px ${primaryColor}60, inset 0 0 20px rgba(255,255,255,0.2)`
           }}
           animate={{ rotate: rotation }}
@@ -311,7 +320,7 @@ export const PremiumWheel = ({
                 key={i}
                 className="absolute w-3 h-3 rounded-full"
                 style={{
-                  background: segmentColors[i % segmentColors.length],
+                  background: wheelColors[i % wheelColors.length],
                   left: `${Math.random() * 100}%`,
                   top: '-10px'
                 }}
