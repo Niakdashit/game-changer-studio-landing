@@ -1,1 +1,5 @@
+
 project_id = "nmfgpmarxibrodbajxif"
+
+[functions.game-generator]
+verify_jwt = false

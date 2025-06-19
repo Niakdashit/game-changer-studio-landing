@@ -13,6 +13,7 @@ import {
 } from '@phosphor-icons/react';
 import type { WizardFormData } from '@/lib/types';
 import { toast } from '@/components/ui/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface WizardGenerationProps {
   formData: WizardFormData;
@@ -61,27 +62,49 @@ export const WizardGeneration = ({
     }, 2000);
 
     try {
-      const res = await fetch('/api/generate-game', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+      console.log('Calling Supabase Edge Function for game generation...');
+      
+      const { data, error } = await supabase.functions.invoke('game-generator', {
+        body: {
+          action: 'generate',
+          ...formData
+        }
       });
 
       clearInterval(interval);
 
-      if (!res.ok) throw new Error('Failed to generate game');
+      if (error) {
+        throw new Error(`Edge Function error: ${error.message}`);
+      }
 
-      const data = await res.json();
-      updateFormData({ generatedGame: true, generatedGameHtml: data.html });
+      if (!data) {
+        throw new Error('No data received from generation service');
+      }
+
+      console.log('Generation successful:', data);
+      
+      updateFormData({ 
+        generatedGame: true, 
+        generatedGameHtml: data.html 
+      });
+      
       setGenerationStep(generationSteps.length - 1);
       setIsComplete(true);
+      
+      toast({
+        title: 'Succès !',
+        description: 'Votre jeu a été généré avec succès.'
+      });
+
     } catch (err) {
       clearInterval(interval);
-      console.error(err);
+      console.error('Generation error:', err);
+      
       toast({
         title: 'Erreur',
-        description: "La génération du jeu a échoué. Veuillez réessayer plus tard."
+        description: err instanceof Error ? err.message : "La génération du jeu a échoué. Veuillez réessayer plus tard."
       });
+      
       setGenerationStep(0);
       setIsComplete(false);
     } finally {

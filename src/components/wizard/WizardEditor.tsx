@@ -13,6 +13,7 @@ import {
   QrCode
 } from '@phosphor-icons/react';
 import type { WizardFormData } from '@/lib/types';
+import { supabase } from '@/integrations/supabase/client';
 
 interface WizardEditorProps {
   formData: WizardFormData;
@@ -60,18 +61,24 @@ export const WizardEditor = ({
   useEffect(() => {
     const updatePreview = async () => {
       try {
-        const res = await fetch('/api/preview', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
+        console.log('Updating preview via Supabase Edge Function...');
+        
+        const { data, error } = await supabase.functions.invoke('game-generator', {
+          body: {
+            action: 'preview',
             ...formData,
             gameTitle,
             gameDescription
-          })
+          }
         });
-        if (!res.ok) return;
-        const data = await res.json();
-        if (data.html) {
+
+        if (error) {
+          console.error('Preview update error:', error);
+          return;
+        }
+
+        if (data?.html) {
+          console.log('Preview updated successfully');
           updateFormData({ generatedGameHtml: data.html });
         }
       } catch (err) {
@@ -273,9 +280,7 @@ export const WizardEditor = ({
                         <div className="w-8 h-8 bg-gray-400 rounded"></div>
                       </div>
 
-                      {/* Main Game Container */}
                       <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 max-w-sm mx-auto text-center shadow-xl">
-                        {/* Game Title */}
                         <h3 className="font-sora font-bold text-xl text-gray-900 mb-3">
                           {gameTitle}
                         </h3>
@@ -283,7 +288,6 @@ export const WizardEditor = ({
                           {gameDescription}
                         </p>
 
-                        {/* Game Mechanic Preview */}
                         <div className="mb-6">
                           {formData.mechanic === 'wheel' && (
                             <div className="w-32 h-32 mx-auto rounded-full border-4 border-gray-200 flex items-center justify-center" style={{ borderColor: formData.primaryColor }}>
@@ -313,7 +317,6 @@ export const WizardEditor = ({
                           )}
                         </div>
 
-                        {/* CTA Button */}
                         <button
                           className="w-full px-6 py-3 rounded-xl text-white font-semibold transition-all duration-250 hover:scale-105 shadow-lg"
                           style={{ backgroundColor: formData.primaryColor }}
@@ -322,7 +325,6 @@ export const WizardEditor = ({
                         </button>
                       </div>
 
-                      {/* Floating Elements */}
                       <div className="absolute top-8 right-8 w-2 h-2 bg-white/60 rounded-full animate-bounce"></div>
                       <div className="absolute bottom-8 left-8 w-1 h-1 bg-white/40 rounded-full animate-pulse delay-500"></div>
                     </div>
