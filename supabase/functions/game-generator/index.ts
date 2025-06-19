@@ -1,77 +1,102 @@
-
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
 serve(async (req) => {
   // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const { action, ...formData } = await req.json();
-    const apiKey = Deno.env.get('GAME_GENERATION_API_KEY');
-    
-    if (!apiKey) {
-      throw new Error('GAME_GENERATION_API_KEY not configured');
+    const openaiKey = Deno.env.get("OPENAI_API_KEY");
+
+    if (!openaiKey) {
+      throw new Error("OPENAI_API_KEY not configured");
     }
 
-    console.log('Processing game generation request:', { action, formData });
+    // Construire le prompt optimisé pour la génération du jeu
+    const prompt = `
+Tu es un assistant expert en développement de mini-jeux marketing en HTML/CSS, à intégrer facilement sur le web et mobile.
+Tu dois générer le code HTML et CSS complet, autonome et responsive d'un jeu sur-mesure, basé sur le brief utilisateur ci-dessous.
 
-    // Déterminer l'endpoint basé sur l'action
-    const endpoint = action === 'preview' ? '/api/preview' : '/api/generate-game';
-    
-    // Pour cet exemple, j'utilise un service fictif. Remplacez par votre vraie URL d'API
-    const apiUrl = `https://your-api-service.com${endpoint}`;
-    
-    // Préparer les données pour votre API
-    const apiPayload = {
-      logo: formData.logo,
-      primaryColor: formData.primaryColor,
-      secondaryColor: formData.secondaryColor,
-      brief: formData.brief,
-      mechanic: formData.mechanic,
-      brandTone: formData.brandTone,
-      objectives: formData.objectives,
-      audience: formData.audience,
-      productName: formData.productName,
-      gameTitle: formData.gameTitle,
-      gameDescription: formData.gameDescription
-    };
+# Informations du projet à respecter (utilise tout, même si certains champs sont facultatifs) :
 
-    console.log('Calling external API:', apiUrl, apiPayload);
+- Type de mécanique : ${formData.mechanic}
+- Nom de la marque/produit : ${formData.productName}
+- Logo (base64 ou URL) : ${formData.logo}
+- Couleur principale : ${formData.primaryColor}
+- Couleur secondaire : ${formData.secondaryColor}
+- Ton de marque/ambiance : ${formData.brandTone}
+- Objectifs marketing : ${Array.isArray(formData.objectives) ? formData.objectives.join(", ") : ""}
+- Cible (audience) : ${Array.isArray(formData.audience) ? formData.audience.join(", ") : ""}
+- Brief créatif : ${formData.brief}
+- Titre du jeu : ${formData.gameTitle}
+- Description affichée dans l’aperçu : ${formData.gameDescription}
 
-    const response = await fetch(apiUrl, {
-      method: 'POST',
+# Contraintes à respecter absolument :
+
+- Code uniquement en HTML et CSS (pas de JS externe).
+- Code autonome : tout doit s’afficher correctement en copiant-collant.
+- Design responsive, moderne et engageant.
+- Intègre les couleurs principales (primaryColor, secondaryColor) et le ton de marque.
+- Affiche le logo de la marque (si fourni).
+- Ajoute un titre accrocheur (gameTitle) et une courte description (gameDescription).
+- Mets en avant la mécanique choisie (“${formData.mechanic}”), en la rendant visuellement attractive.
+- Optimise pour conversion : CTA visible et formulaire si “collecte d’emails” est présent dans les objectifs.
+- Laisse un marquage HTML clair pour permettre des adaptations ultérieures (commentaires dans le code).
+- Si besoin, ajoute une animation CSS subtile (ex : roue qui tourne doucement, effet hover sur boutons…).
+
+# Format attendu
+- Renvoie uniquement le code HTML et CSS dans une balise <html>...</html>, prêt à être utilisé dans un <iframe>.
+`;
+
+    // Appel à l’API OpenAI (GPT-4o, tu peux aussi mettre gpt-3.5-turbo si tu veux)
+    const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        'X-API-Key': apiKey
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${openaiKey}`,
       },
-      body: JSON.stringify(apiPayload)
+      body: JSON.stringify({
+        model: "gpt-4o",
+        messages: [
+          { role: "system", content: "Tu es un assistant expert en création de jeux HTML/CSS pour le web." },
+          { role: "user", content: prompt }
+        ],
+        max_tokens: 2500,
+        temperature: 0.5
+      }),
     });
 
-    if (!response.ok) {
-      throw new Error(`API call failed: ${response.status} ${response.statusText}`);
+    if (!openaiRes.ok) {
+      throw new Error(`OpenAI API call failed: ${openaiRes.status} ${openaiRes.statusText}`);
     }
 
-    const result = await response.json();
-    
-    console.log('API response received:', result);
+    const openaiData = await openaiRes.json();
+    const htmlContent =
+      openaiData.choices &&
+      openaiData.choices[0] &&
+      openaiData.choices[0].message &&
+      openaiData.choices[0].message.content
+        ? openaiData.choices[0].message.content
+        : "<html><body>Erreur de génération du jeu.</body></html>";
 
-    return new Response(JSON.stringify(result), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-
+    return new Response(
+      JSON.stringify({ html: htmlContent }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
-    console.error('Error in game-generator function:', error);
-    
-    // Retourner une réponse de fallback en cas d'erreur
+    console.error("Error in game-generator function:", error);
+
+    // Réponse fallback en cas d'erreur
     const fallbackHtml = `
       <html>
         <body style="margin:0; padding:20px; font-family:Arial,sans-serif; background:linear-gradient(135deg,#667eea,#764ba2);">
@@ -86,13 +111,15 @@ serve(async (req) => {
         </body>
       </html>
     `;
-
-    return new Response(JSON.stringify({ 
-      html: fallbackHtml,
-      error: error.message 
-    }), {
-      status: 200, // On retourne 200 pour que l'interface continue de fonctionner
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({
+        html: fallbackHtml,
+        error: error.message
+      }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
   }
 });
