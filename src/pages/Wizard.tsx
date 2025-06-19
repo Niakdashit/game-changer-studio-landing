@@ -9,6 +9,7 @@ import type { WizardFormData } from '@/lib/types';
 
 const Wizard = () => {
   const [step, setStep] = useState(0);
+
   const [formData, setFormData] = useState<WizardFormData>({
     logo: null,
     primaryColor: '#000000',
@@ -22,15 +23,18 @@ const Wizard = () => {
     productName: ''
   });
 
+  // Fonction pour mettre à jour les données du formulaire
   const updateFormData = (data: Partial<WizardFormData>) =>
     setFormData(prev => ({ ...prev, ...data }));
 
+  // Passage à l'étape suivante/précédente
   const next = () => setStep(s => Math.min(s + 1, 3));
   const previous = () => setStep(s => Math.max(s - 1, 0));
 
   return (
     <div className="min-h-screen bg-gray-light">
       <Navigation />
+
       {step === 0 && (
         <WizardBranding
           formData={formData}
@@ -66,6 +70,7 @@ const Wizard = () => {
           isLastStep
         />
       )}
+
       <Footer />
     </div>
   );
