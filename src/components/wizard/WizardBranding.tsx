@@ -152,17 +152,17 @@ export const WizardBranding = ({ formData, updateFormData, onNext }: WizardBrand
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-6 md:py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 md:py-12">
         {/* Desktop Header */}
         <div className="hidden md:block text-center mb-12">
           <div className="inline-flex items-center bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
             <PhSparkle className="mr-2 h-4 w-4" />
             Étape 1 sur 4
           </div>
-          <h1 className="text-4xl font-sora font-bold text-gray-900 mb-4">
+          <h1 className="text-3xl md:text-4xl font-sora font-bold text-gray-900 mb-4">
             Votre identité de marque
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
             Définissons ensemble les bases créatives qui rendront votre jeu unique et mémorable.
           </p>
         </div>
@@ -281,11 +281,15 @@ export const WizardBranding = ({ formData, updateFormData, onNext }: WizardBrand
             <RadioGroup value={brandTone} onValueChange={handleBrandToneChange}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {brandTones.map((tone) => (
-                  <div key={tone.value} className={`relative p-4 rounded-xl border-2 transition-all cursor-pointer ${
-                    brandTone === tone.value 
-                      ? 'border-primary bg-primary/5 shadow-sm' 
-                      : 'border-gray-200 hover:border-primary/30 hover:bg-primary/5'
-                  }`}>
+                  <div
+                    key={tone.value}
+                    className={`relative p-4 rounded-xl border-2 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 active:scale-95 motion-safe:hover:[transform:rotateX(3deg)_rotateY(-3deg)] motion-safe:hover:animate-fade-scale ${
+                      brandTone === tone.value
+                        ? 'border-primary bg-primary/5 shadow-sm'
+                        : 'border-gray-200 hover:border-primary/30 hover:bg-primary/5'
+                    }`}
+                    tabIndex={0}
+                  >
                     <RadioGroupItem value={tone.value} id={tone.value} className="sr-only" />
                     <Label htmlFor={tone.value} className="cursor-pointer block">
                       <div className="flex items-start space-x-3">
@@ -316,11 +320,12 @@ export const WizardBranding = ({ formData, updateFormData, onNext }: WizardBrand
                 <button
                   key={objective}
                   onClick={() => handleObjectiveToggle(objective)}
-                  className={`p-4 rounded-xl border-2 text-left transition-all relative ${
+                  className={`p-4 rounded-xl border-2 text-left transition-all relative focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 active:scale-95 motion-safe:hover:[transform:rotateX(3deg)_rotateY(-3deg)] motion-safe:hover:animate-fade-scale ${
                     objectives.includes(objective)
                       ? 'border-primary bg-primary/5 shadow-sm'
                       : 'border-gray-200 hover:border-primary/30 hover:bg-primary/5'
                   }`}
+                  tabIndex={0}
                 >
                   <span className="font-medium">{objective}</span>
                   {objectives.includes(objective) && (

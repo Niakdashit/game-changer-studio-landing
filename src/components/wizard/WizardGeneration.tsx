@@ -1,6 +1,7 @@
-
 import { useState, useEffect } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 import {
   ArrowLeft,
   ArrowRight,
@@ -11,6 +12,7 @@ import {
   Check
 } from '@phosphor-icons/react';
 import type { WizardFormData } from '@/lib/types';
+import { toast } from '@/components/ui/use-toast';
 
 interface WizardGenerationProps {
   formData: WizardFormData;
@@ -20,15 +22,16 @@ interface WizardGenerationProps {
   currentStep: number;
 }
 
-export const WizardGeneration = ({ 
-  formData, 
-  updateFormData, 
-  onNext, 
-  onPrevious 
+export const WizardGeneration = ({
+  formData,
+  updateFormData,
+  onNext,
+  onPrevious
 }: WizardGenerationProps) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationStep, setGenerationStep] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
 
   const generationSteps = [
     { text: "Analyse de votre identité de marque...", icon: "🎨" },
@@ -43,24 +46,52 @@ export const WizardGeneration = ({
     } else {
       setIsComplete(true);
     }
+    // eslint-disable-next-line
   }, []);
 
   const handleGenerate = async () => {
     setIsGenerating(true);
     setGenerationStep(0);
-    
-    for (let i = 0; i < generationSteps.length; i++) {
-      setGenerationStep(i);
-      await new Promise(resolve => setTimeout(resolve, 2000));
+    setIsComplete(false);
+
+    let current = 0;
+    const interval = setInterval(() => {
+      current = (current + 1) % generationSteps.length;
+      setGenerationStep(current);
+    }, 2000);
+
+    try {
+      const res = await fetch('/api/generate-game', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      clearInterval(interval);
+
+      if (!res.ok) throw new Error('Failed to generate game');
+
+      const data = await res.json();
+      updateFormData({ generatedGame: true, generatedGameHtml: data.html });
+      setGenerationStep(generationSteps.length - 1);
+      setIsComplete(true);
+    } catch (err) {
+      clearInterval(interval);
+      console.error(err);
+      toast({
+        title: 'Erreur',
+        description: "La génération du jeu a échoué. Veuillez réessayer plus tard."
+      });
+      setGenerationStep(0);
+      setIsComplete(false);
+    } finally {
+      setIsGenerating(false);
     }
-    
-    setIsGenerating(false);
-    setIsComplete(true);
-    updateFormData({ generatedGame: true });
   };
 
   const handleRegenerate = () => {
     setIsComplete(false);
+    updateFormData({ generatedGameHtml: undefined, generatedGame: null });
     handleGenerate();
   };
 
@@ -99,37 +130,48 @@ export const WizardGeneration = ({
           <div className="text-center py-8 md:py-16">
             <div className="w-24 h-24 mx-auto mb-8 relative">
               <div className="absolute inset-0 rounded-full border-4 border-primary/20"></div>
-              <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
-              <PhSparkle className="absolute inset-0 m-auto h-8 w-8 text-primary animate-pulse" />
+              <div className={`absolute inset-0 rounded-full border-4 border-primary border-t-transparent ${shouldReduceMotion ? '' : 'animate-spin'}`}></div>
+              <PhSparkle className={`absolute inset-0 m-auto h-8 w-8 text-primary ${shouldReduceMotion ? '' : 'animate-pulse'}`} />
             </div>
-            
-            <h3 className="text-2xl md:text-3xl font-sora font-bold text-gray-900 mb-6">
+
+            <h3 className="text-2xl md:text-3xl font-sora font-bold text-gray-900 mb-4">
               Création en cours...
             </h3>
-            
+
+            <Progress
+              value={isComplete ? 100 : (generationStep / generationSteps.length) * 100}
+              className="max-w-md mx-auto mb-6"
+            />
+
             <div className="max-w-md mx-auto space-y-4">
               {generationSteps.map((step, index) => (
-                <div 
+                <motion.div
                   key={index}
-                  className={`flex items-center p-4 rounded-xl transition-all duration-500 ${
-                    index === generationStep 
-                      ? 'bg-primary/10 text-primary border-2 border-primary/20' 
-                      : index < generationStep 
-                      ? 'bg-green-50 text-green-600 border-2 border-green-200'
-                      : 'bg-gray-50 text-gray-400 border-2 border-gray-200'
+                  initial={{ opacity: 0, x: shouldReduceMotion ? 0 : 20 }}
+                  animate={{
+                    opacity: index <= generationStep ? 1 : 0.5,
+                    x: 0
+                  }}
+                  transition={{ duration: shouldReduceMotion ? 0 : 0.3 }}
+                  className={`flex items-center p-4 rounded-xl ${
+                    index === generationStep
+                      ? 'bg-primary/10 text-primary border-2 border-primary/20'
+                      : index < generationStep
+                        ? 'bg-green-50 text-green-600 border-2 border-green-200'
+                        : 'bg-gray-50 text-gray-400 border-2 border-gray-200'
                   }`}
                 >
                   <div className={`w-8 h-8 rounded-full mr-4 flex items-center justify-center text-lg ${
-                    index === generationStep 
-                      ? 'bg-primary text-white animate-pulse' 
-                      : index < generationStep 
-                      ? 'bg-green-500 text-white'
-                      : 'bg-gray-300 text-white'
+                    index === generationStep
+                      ? `bg-primary text-white ${shouldReduceMotion ? '' : 'animate-pulse'}`
+                      : index < generationStep
+                        ? 'bg-green-500 text-white'
+                        : 'bg-gray-300 text-white'
                   }`}>
-                  {index < generationStep ? <Check className="w-4 h-4" /> : step.icon}
+                    {index < generationStep ? <Check className="w-4 h-4" /> : step.icon}
                   </div>
                   <span className="font-medium">{step.text}</span>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -139,88 +181,97 @@ export const WizardGeneration = ({
             {/* Preview Canvas */}
             <div className="order-2 lg:order-1">
               <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200/50">
-                <div 
+                <div
                   className="w-full aspect-square rounded-xl p-8 flex items-center justify-center relative overflow-hidden"
-                  style={{ 
-                    background: `linear-gradient(135deg, ${formData.primaryColor}, ${formData.secondaryColor})` 
+                  style={{
+                    background: `linear-gradient(135deg, ${formData.primaryColor}, ${formData.secondaryColor})`
                   }}
                 >
-                  {/* Game Preview based on selected mechanic */}
-                  {formData.mechanic === 'wheel' && (
-                    <div className="relative">
-                      <div className="w-48 h-48 rounded-full border-8 border-white/20 relative">
-                        <div className="absolute inset-4 rounded-full border-4 border-white/40"></div>
-                        {[...Array(8)].map((_, i) => (
-                          <div
-                            key={i}
-                            className="absolute w-full h-full animate-spin"
-                            style={{ 
-                              transform: `rotate(${i * 45}deg)`,
-                              animationDuration: '20s',
-                              animationIterationCount: 'infinite'
-                            }}
-                          >
-                            <div className="w-1 h-20 bg-white/80 mx-auto"></div>
+                  {formData.generatedGameHtml ? (
+                    <iframe
+                      title="game-preview"
+                      srcDoc={formData.generatedGameHtml}
+                      className="absolute inset-0 w-full h-full border-none rounded-xl"
+                    />
+                  ) : (
+                    <>
+                      {/* Game Preview based on selected mechanic */}
+                      {formData.mechanic === 'wheel' && (
+                        <div className="relative">
+                          <div className="w-48 h-48 rounded-full border-8 border-white/20 relative">
+                            <div className="absolute inset-4 rounded-full border-4 border-white/40"></div>
+                            {[...Array(8)].map((_, i) => (
+                              <div
+                                key={i}
+                                className={`absolute w-full h-full ${shouldReduceMotion ? '' : 'animate-spin'}`}
+                                style={{
+                                  transform: `rotate(${i * 45}deg)`,
+                                  animationDuration: '20s',
+                                  animationIterationCount: 'infinite'
+                                }}
+                              >
+                                <div className="w-1 h-20 bg-white/80 mx-auto"></div>
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center">
-                          <div className="w-6 h-6 bg-primary rounded-full"></div>
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center">
+                              <div className="w-6 h-6 bg-primary rounded-full"></div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  )}
+                      )}
 
-                  {formData.mechanic === 'quiz' && (
-                    <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 max-w-sm w-full shadow-lg">
-                      <h3 className="font-sora font-bold text-gray-800 mb-4">Quelle est votre préférence ?</h3>
-                      <div className="space-y-3">
-                        {['Option A', 'Option B', 'Option C'].map((answer, i) => (
-                          <button 
-                            key={i}
-                            className="w-full p-3 text-left rounded-lg bg-gray-100 hover:bg-primary/10 transition-colors border border-gray-200"
-                          >
-                            {answer}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {formData.mechanic === 'scratch' && (
-                    <div className="relative w-64 h-40">
-                      <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl shadow-lg"></div>
-                      <div className="absolute inset-4 bg-white/30 rounded-lg backdrop-blur-sm"></div>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-white font-bold text-xl">Grattez ici !</span>
-                      </div>
-                    </div>
-                  )}
-
-                  {formData.mechanic === 'jackpot' && (
-                    <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-lg">
-                      <div className="flex space-x-4 mb-6">
-                        {[1,2,3].map(i => (
-                          <div key={i} className="w-16 h-20 bg-gray-800 rounded-lg flex items-center justify-center shadow-md">
-                            <span className="text-yellow-400 text-2xl font-bold animate-pulse">7</span>
+                      {formData.mechanic === 'quiz' && (
+                        <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 max-w-sm w-full shadow-lg">
+                          <h3 className="font-sora font-bold text-gray-800 mb-4">Quelle est votre préférence ?</h3>
+                          <div className="space-y-3">
+                            {['Option A', 'Option B', 'Option C'].map((answer, i) => (
+                              <button 
+                                key={i}
+                                className="w-full p-3 text-left rounded-lg bg-gray-100 hover:bg-primary/10 transition-colors border border-gray-200"
+                              >
+                                {answer}
+                              </button>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                      <button className="w-full bg-gradient-to-r from-red-500 to-pink-500 text-white py-3 rounded-lg font-bold shadow-lg hover:scale-105 transition-transform">
-                        JOUER
-                      </button>
-                    </div>
-                  )}
+                        </div>
+                      )}
 
-                  {/* Brand elements */}
-                  <div className="absolute top-4 left-4 w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center shadow-md">
-                    <div className="w-8 h-8 bg-gray-400 rounded"></div>
-                  </div>
-                  
-                  {/* Floating particles */}
-                  <div className="absolute top-8 right-8 w-2 h-2 bg-white/60 rounded-full animate-bounce"></div>
-                  <div className="absolute bottom-8 left-8 w-1 h-1 bg-white/40 rounded-full animate-pulse delay-500"></div>
+                      {formData.mechanic === 'scratch' && (
+                        <div className="relative w-64 h-40">
+                          <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl shadow-lg"></div>
+                          <div className="absolute inset-4 bg-white/30 rounded-lg backdrop-blur-sm"></div>
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="text-white font-bold text-xl">Grattez ici !</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {formData.mechanic === 'jackpot' && (
+                        <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-lg">
+                          <div className="flex space-x-4 mb-6">
+                            {[1,2,3].map(i => (
+                              <div key={i} className="w-16 h-20 bg-gray-800 rounded-lg flex items-center justify-center shadow-md">
+                                <span className={`text-yellow-400 text-2xl font-bold ${shouldReduceMotion ? '' : 'animate-pulse'}`}>7</span>
+                              </div>
+                            ))}
+                          </div>
+                          <button className="w-full bg-gradient-to-r from-red-500 to-pink-500 text-white py-3 rounded-lg font-bold shadow-lg hover:scale-105 transition-transform">
+                            JOUER
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Brand elements */}
+                      <div className="absolute top-4 left-4 w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center shadow-md">
+                        <div className="w-8 h-8 bg-gray-400 rounded"></div>
+                      </div>
+                      {/* Floating particles */}
+                      <div className={`absolute top-8 right-8 w-2 h-2 bg-white/60 rounded-full ${shouldReduceMotion ? '' : 'animate-bounce'}`}></div>
+                      <div className={`absolute bottom-8 left-8 w-1 h-1 bg-white/40 rounded-full ${shouldReduceMotion ? '' : 'animate-pulse delay-500'}`}></div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -295,7 +346,7 @@ export const WizardGeneration = ({
               <ArrowLeft className="mr-2 h-4 w-4" />
               Retour
             </Button>
-            
+
             <Button
               onClick={onNext}
               size="lg"
@@ -320,7 +371,7 @@ export const WizardGeneration = ({
             <ArrowLeft className="mr-2 h-4 w-4" />
             Retour
           </Button>
-          
+
           <Button
             onClick={onNext}
             size="lg"

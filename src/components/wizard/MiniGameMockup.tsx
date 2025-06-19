@@ -11,9 +11,9 @@ export const MiniGameMockup = ({ formData }: MiniGameMockupProps) => {
       <div className="text-center mb-2">
         <span className="text-xs font-inter text-gray-500">Aperçu en temps réel</span>
       </div>
-      <div 
-        className="w-full h-32 rounded-xl p-4 flex items-center justify-center relative overflow-hidden"
-        style={{ 
+      <div
+        className="w-full h-32 max-h-[25vh] rounded-xl p-4 flex items-center justify-center relative overflow-hidden"
+        style={{
           background: `linear-gradient(135deg, ${formData.primaryColor}20, ${formData.secondaryColor}20)`,
           border: `2px solid ${formData.primaryColor}30`
         }}

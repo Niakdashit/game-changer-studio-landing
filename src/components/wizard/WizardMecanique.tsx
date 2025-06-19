@@ -79,17 +79,17 @@ export const WizardMecanique = ({ formData, updateFormData, onNext, onPrevious }
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 py-6 md:py-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 md:py-12">
         {/* Desktop Header */}
         <div className="hidden md:block text-center mb-12">
           <div className="inline-flex items-center bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
             <PhSparkle className="mr-2 h-4 w-4" />
             Étape 2 sur 4
           </div>
-          <h1 className="text-4xl font-sora font-bold text-gray-900 mb-4">
+          <h1 className="text-3xl md:text-4xl font-sora font-bold text-gray-900 mb-4">
             Choix de la mécanique
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
             Sélectionnez le type de jeu qui correspond le mieux à vos objectifs
           </p>
         </div>
@@ -101,12 +101,13 @@ export const WizardMecanique = ({ formData, updateFormData, onNext, onPrevious }
             return (
               <div
                 key={mechanic.id}
-                className={`relative bg-white rounded-2xl p-6 border-2 cursor-pointer transition-all duration-300 hover:scale-102 hover:shadow-lg ${
+                className={`relative bg-white rounded-2xl p-6 border-2 cursor-pointer transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 active:scale-95 motion-safe:hover:[transform:rotateX(3deg)_rotateY(-3deg)_scale(1.02)] motion-safe:hover:animate-fade-scale ${
                   formData.mechanic === mechanic.id
                     ? 'border-primary shadow-lg shadow-primary/20 ring-4 ring-primary/10'
                     : 'border-gray-200 hover:border-primary/50'
                 }`}
                 onClick={() => handleMechanicSelect(mechanic.id)}
+                tabIndex={0}
               >
                 {/* Badge */}
                 <div className="absolute -top-3 left-4">
