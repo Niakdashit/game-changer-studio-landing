@@ -1,6 +1,8 @@
 
 import { useState, useEffect } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 import { ArrowLeft, ArrowRight, Sparkles, Wand2, RefreshCw, Eye, Check } from 'lucide-react';
 import type { WizardFormData } from '@/lib/types';
 
@@ -21,6 +23,7 @@ export const WizardGeneration = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationStep, setGenerationStep] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
 
   const generationSteps = [
     { text: "Analyse de votre identité de marque...", icon: "🎨" },
@@ -91,37 +94,48 @@ export const WizardGeneration = ({
           <div className="text-center py-8 md:py-16">
             <div className="w-24 h-24 mx-auto mb-8 relative">
               <div className="absolute inset-0 rounded-full border-4 border-primary/20"></div>
-              <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
-              <Sparkles className="absolute inset-0 m-auto h-8 w-8 text-primary animate-pulse" />
+              <div className={`absolute inset-0 rounded-full border-4 border-primary border-t-transparent ${shouldReduceMotion ? '' : 'animate-spin'}`}></div>
+              <Sparkles className={`absolute inset-0 m-auto h-8 w-8 text-primary ${shouldReduceMotion ? '' : 'animate-pulse'}`} />
             </div>
             
-            <h3 className="text-2xl md:text-3xl font-sora font-bold text-gray-900 mb-6">
+            <h3 className="text-2xl md:text-3xl font-sora font-bold text-gray-900 mb-4">
               Création en cours...
             </h3>
-            
+
+            <Progress
+              value={isComplete ? 100 : (generationStep / generationSteps.length) * 100}
+              className="max-w-md mx-auto mb-6"
+            />
+
             <div className="max-w-md mx-auto space-y-4">
               {generationSteps.map((step, index) => (
-                <div 
+                <motion.div
                   key={index}
-                  className={`flex items-center p-4 rounded-xl transition-all duration-500 ${
-                    index === generationStep 
-                      ? 'bg-primary/10 text-primary border-2 border-primary/20' 
-                      : index < generationStep 
+                  initial={{ opacity: 0, x: shouldReduceMotion ? 0 : 20 }}
+                  animate={{
+                    opacity: index <= generationStep ? 1 : 0.5,
+                    x: 0
+                  }}
+                  transition={{ duration: shouldReduceMotion ? 0 : 0.3 }}
+                  className={`flex items-center p-4 rounded-xl ${
+                    index === generationStep
+                      ? 'bg-primary/10 text-primary border-2 border-primary/20'
+                      : index < generationStep
                       ? 'bg-green-50 text-green-600 border-2 border-green-200'
                       : 'bg-gray-50 text-gray-400 border-2 border-gray-200'
                   }`}
                 >
                   <div className={`w-8 h-8 rounded-full mr-4 flex items-center justify-center text-lg ${
-                    index === generationStep 
-                      ? 'bg-primary text-white animate-pulse' 
-                      : index < generationStep 
+                    index === generationStep
+                      ? `bg-primary text-white ${shouldReduceMotion ? '' : 'animate-pulse'}`
+                      : index < generationStep
                       ? 'bg-green-500 text-white'
                       : 'bg-gray-300 text-white'
                   }`}>
                     {index < generationStep ? <Check className="w-4 h-4" /> : step.icon}
                   </div>
                   <span className="font-medium">{step.text}</span>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -145,8 +159,8 @@ export const WizardGeneration = ({
                         {[...Array(8)].map((_, i) => (
                           <div
                             key={i}
-                            className="absolute w-full h-full animate-spin"
-                            style={{ 
+                            className={`absolute w-full h-full ${shouldReduceMotion ? '' : 'animate-spin'}`}
+                            style={{
                               transform: `rotate(${i * 45}deg)`,
                               animationDuration: '20s',
                               animationIterationCount: 'infinite'
@@ -195,7 +209,7 @@ export const WizardGeneration = ({
                       <div className="flex space-x-4 mb-6">
                         {[1,2,3].map(i => (
                           <div key={i} className="w-16 h-20 bg-gray-800 rounded-lg flex items-center justify-center shadow-md">
-                            <span className="text-yellow-400 text-2xl font-bold animate-pulse">7</span>
+                            <span className={`text-yellow-400 text-2xl font-bold ${shouldReduceMotion ? '' : 'animate-pulse'}`}>7</span>
                           </div>
                         ))}
                       </div>
@@ -211,8 +225,8 @@ export const WizardGeneration = ({
                   </div>
                   
                   {/* Floating particles */}
-                  <div className="absolute top-8 right-8 w-2 h-2 bg-white/60 rounded-full animate-bounce"></div>
-                  <div className="absolute bottom-8 left-8 w-1 h-1 bg-white/40 rounded-full animate-pulse delay-500"></div>
+                  <div className={`absolute top-8 right-8 w-2 h-2 bg-white/60 rounded-full ${shouldReduceMotion ? '' : 'animate-bounce'}`}></div>
+                  <div className={`absolute bottom-8 left-8 w-1 h-1 bg-white/40 rounded-full ${shouldReduceMotion ? '' : 'animate-pulse delay-500'}`}></div>
                 </div>
               </div>
             </div>
