@@ -24,6 +24,7 @@ export const BrandSettingsForm = ({ formData, updateFormData }: BrandSettingsFor
     }
   }, [segmentCount]);
 
+  // FUSION : handleFile gère l'URL pour preview image (logo, fond desktop, fond mobile)
   const handleFile = (
     field: 'logo' | 'backgroundDesktop' | 'backgroundMobile'
   ) => (e: React.ChangeEvent<HTMLInputElement>) => {
