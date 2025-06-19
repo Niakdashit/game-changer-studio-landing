@@ -25,9 +25,21 @@ export const WizardEditor = ({
   const [gameDescription, setGameDescription] = useState('Participez à notre jeu concours...');
 
   const deviceSizes = {
-    desktop: { width: '100%', height: '600px', maxWidth: '800px' },
-    tablet: { width: '100%', height: '600px', maxWidth: '600px' },
-    mobile: { width: '100%', height: '600px', maxWidth: '375px' }
+    desktop: {
+      width: '100%',
+      maxWidth: 'clamp(600px, 80vw, 800px)',
+      height: 'clamp(450px, 70vh, 600px)'
+    },
+    tablet: {
+      width: '100%',
+      maxWidth: 'clamp(400px, 80vw, 600px)',
+      height: 'clamp(400px, 65vh, 600px)'
+    },
+    mobile: {
+      width: '100%',
+      maxWidth: 'clamp(300px, 90vw, 375px)',
+      height: 'clamp(350px, 60vh, 600px)'
+    }
   };
 
   const exportOptions = [
@@ -51,17 +63,17 @@ export const WizardEditor = ({
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-6 md:py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 md:py-12">
         {/* Desktop Header */}
         <div className="hidden md:block text-center mb-8">
           <div className="inline-flex items-center bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
             <Save className="mr-2 h-4 w-4" />
             Étape 4 sur 4
           </div>
-          <h1 className="text-4xl font-sora font-bold text-gray-900 mb-4">
+          <h1 className="text-3xl md:text-4xl font-sora font-bold text-gray-900 mb-4">
             Personnalisation finale
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
             Modifiez le style, les textes ou les visuels selon vos préférences.
           </p>
         </div>
