@@ -49,7 +49,7 @@ const Wizard = () => {
   const CurrentStepComponent = stepComponents[currentStep - 1];
 
   return (
-    <div className="fixed inset-0 z-50 bg-gray-light min-h-screen">
+    <div className="min-h-screen bg-gray-light flex flex-col">
       {/* Header with Breadcrumb */}
       <header className="sticky top-0 z-10 backdrop-blur-12 bg-white/75 border-b border-gray-200/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -111,7 +111,7 @@ const Wizard = () => {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-y-auto">
         <CurrentStepComponent 
           formData={formData}
           updateFormData={updateFormData}
