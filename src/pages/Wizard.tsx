@@ -24,6 +24,7 @@ const Wizard = () => {
     brief: '',
     mechanic: '',
     generatedGame: null,
+    generatedGameHtml: '',
   });
 
   const handleNext = () => {

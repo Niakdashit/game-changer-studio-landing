@@ -6,6 +6,7 @@ export interface WizardFormData {
   brief: string;
   mechanic: string;
   generatedGame: boolean | null;
+  generatedGameHtml?: string;
   brandTone?: string;
   objectives?: string[];
   audience?: string[];
