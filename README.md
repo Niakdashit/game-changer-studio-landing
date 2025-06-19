@@ -34,3 +34,25 @@ npm i
 
 # Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
+```
+
+## API server
+
+During development, run both the client and API server:
+
+```sh
+npm run dev
+```
+
+To start only the API server in development:
+
+```sh
+npm run dev:server
+```
+
+For production, build the server and start it:
+
+```sh
+npm run build:server
+npm run start:server
+```
