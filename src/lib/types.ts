@@ -11,3 +11,28 @@ export interface WizardFormData {
   audience?: string[];
   productName?: string;
 }
+
+export interface WizardInput {
+  type: 'file-upload' | 'color-picker' | 'select' | 'checkbox' | 'chips' | 'text';
+  label: string;
+  required?: boolean;
+  accept?: string[];
+  allowMultiple?: boolean;
+  max?: number;
+  options?: string[];
+  placeholder?: string;
+  preview?: boolean;
+  feedbackText?: string;
+  showPreviewBlock?: boolean;
+  suggestions?: string[];
+}
+
+export interface WizardStep {
+  title: string;
+  description: string;
+  inputs?: WizardInput[];
+  type?: string;
+  options?: any;
+  mobilePreviewSticky?: boolean;
+  previewComponent?: string;
+}
