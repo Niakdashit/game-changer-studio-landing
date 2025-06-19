@@ -1,80 +1,40 @@
-
 import { useState } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
-import { BrandConfigurator } from '@/components/wizard/BrandConfigurator';
-import { WizardMecanique } from '@/components/wizard/WizardMecanique';
-import { WizardGeneration } from '@/components/wizard/WizardGeneration';
-import { WizardEditor } from '@/components/wizard/WizardEditor';
+import { BrandSettingsForm } from '@/components/configurator/BrandSettingsForm';
+import { WheelPreview } from '@/components/configurator/WheelPreview';
 import type { WizardFormData } from '@/lib/types';
 
 const Wizard = () => {
-  const [step, setStep] = useState(0);
-
   const [formData, setFormData] = useState<WizardFormData>({
     logo: null,
     primaryColor: '#e52529',
     secondaryColor: '#ffd600',
     accentColor: '#009de0',
     brief: '',
-    mechanic: '',
+    mechanic: 'wheel',
     generatedGame: null,
-    brandTone: '',
-    objectives: [],
-    audience: [],
     productName: '',
     gameTitle: '',
-    prizes: ['', '', '', '']
+    prizes: Array(6).fill(''),
+    segmentColors: Array(6).fill('#e52529'),
+    segmentCount: 6,
+    style: 'Premium',
+    brandUrl: '',
+    backgroundDesktop: null,
+    backgroundMobile: null,
   });
 
-  // Fonction pour mettre à jour les données du formulaire
   const updateFormData = (data: Partial<WizardFormData>) =>
     setFormData(prev => ({ ...prev, ...data }));
-
-  // Passage à l'étape suivante/précédente
-  const next = () => setStep(s => Math.min(s + 1, 3));
-  const previous = () => setStep(s => Math.max(s - 1, 0));
 
   return (
     <div className="min-h-screen bg-gray-light">
       <Navigation />
-
-      {step === 0 && (
-        <BrandConfigurator
-          formData={formData}
-          updateFormData={updateFormData}
-          onNext={next}
-          currentStep={step}
-        />
-      )}
-      {step === 1 && (
-        <WizardMecanique
-          formData={formData}
-          updateFormData={updateFormData}
-          onNext={next}
-          onPrevious={previous}
-          currentStep={step}
-        />
-      )}
-      {step === 2 && (
-        <WizardGeneration
-          formData={formData}
-          updateFormData={updateFormData}
-          onNext={next}
-          onPrevious={previous}
-          currentStep={step}
-        />
-      )}
-      {step === 3 && (
-        <WizardEditor
-          formData={formData}
-          updateFormData={updateFormData}
-          onPrevious={previous}
-          currentStep={step}
-          isLastStep
-        />
-      )}
-
+      <div className="max-w-7xl mx-auto p-4 grid md:grid-cols-2 gap-8">
+        <BrandSettingsForm formData={formData} updateFormData={updateFormData} />
+        <WheelPreview formData={formData} />
+      </div>
       <Footer />
     </div>
   );
