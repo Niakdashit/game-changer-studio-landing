@@ -130,7 +130,7 @@ export const WizardBranding = ({ formData, updateFormData, onNext }: WizardBrand
   const isValid = formData.logo && brandTone && objectives.length > 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5 overflow-auto">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5">
       {/* Mobile Header */}
       <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-lg border-b border-gray-200/50 px-4 py-4 md:hidden">
         <div className="flex items-center justify-between">

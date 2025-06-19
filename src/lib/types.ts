@@ -32,7 +32,7 @@ export interface WizardStep {
   description: string;
   inputs?: WizardInput[];
   type?: string;
-  options?: any;
+  options?: Record<string, unknown>;
   mobilePreviewSticky?: boolean;
   previewComponent?: string;
 }
