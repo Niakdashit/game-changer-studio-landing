@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -11,6 +10,7 @@ interface PremiumWheelProps {
   logoUrl?: string;
   backgroundUrl?: string;
   fallbackBackground?: string;
+  segmentColors?: string[];
   prizes?: string[];
   onSpin?: (result: string) => void;
 }
@@ -24,6 +24,7 @@ export const PremiumWheel = ({
   logoUrl,
   backgroundUrl,
   fallbackBackground,
+  segmentColors,
   prizes = [
     "🍓 Fraise Tagada",
     "🐻 Ourson d'Or", 
@@ -42,38 +43,38 @@ export const PremiumWheel = ({
   const [showConfetti, setShowConfetti] = useState(false);
   const wheelRef = useRef<HTMLDivElement>(null);
 
-  const segmentColors = [
+  const defaultColors = [
     primaryColor,
     secondaryColor,
     accentColor,
-    "#3ab54a",
-    "#ffffff",
-    primaryColor,
-    secondaryColor,
-    accentColor
+    '#3ab54a',
+    '#ffffff'
   ];
+
+  const wheelColors = Array.from({ length: prizes.length }, (_, i) =>
+    segmentColors?.[i] || defaultColors[i % defaultColors.length]
+  );
 
   const spinWheel = () => {
     if (isSpinning) return;
-    
     setIsSpinning(true);
     setWinner(null);
-    
+
     const randomSpin = Math.random() * 360 + 1800; // 5+ tours
     const finalRotation = rotation + randomSpin;
     setRotation(finalRotation);
-    
+
     setTimeout(() => {
       const segmentAngle = 360 / prizes.length;
       const normalizedRotation = (360 - (finalRotation % 360)) % 360;
       const winnerIndex = Math.floor(normalizedRotation / segmentAngle);
       const selectedPrize = prizes[winnerIndex];
-      
+
       setWinner(selectedPrize);
       setShowConfetti(true);
       setIsSpinning(false);
       onSpin?.(selectedPrize);
-      
+
       setTimeout(() => setShowConfetti(false), 3000);
     }, 3000);
   };
@@ -156,9 +157,9 @@ export const PremiumWheel = ({
           ref={wheelRef}
           className="relative w-80 h-80 md:w-96 md:h-96 rounded-full shadow-2xl"
           style={{
-            background: `conic-gradient(from 0deg, ${segmentColors.map((color, i) => 
-              `${color} ${(i * 360 / segmentColors.length)}deg ${((i + 1) * 360 / segmentColors.length)}deg`
-            ).join(', ')})`,
+            background: `conic-gradient(from 0deg, ${wheelColors
+              .map((color, i) => `${color} ${(i * 360 / wheelColors.length)}deg ${((i + 1) * 360 / wheelColors.length)}deg`)
+              .join(', ')})`,
             boxShadow: `0 0 60px ${primaryColor}60, inset 0 0 20px rgba(255,255,255,0.2)`
           }}
           animate={{ rotate: rotation }}
@@ -317,7 +318,7 @@ export const PremiumWheel = ({
                 key={i}
                 className="absolute w-3 h-3 rounded-full"
                 style={{
-                  background: segmentColors[i % segmentColors.length],
+                  background: wheelColors[i % wheelColors.length],
                   left: `${Math.random() * 100}%`,
                   top: '-10px'
                 }}

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
@@ -12,6 +12,7 @@ interface BrandSettingsFormProps {
 
 export const BrandSettingsForm = ({ formData, updateFormData }: BrandSettingsFormProps) => {
   const segmentCount = formData.segmentCount || 6;
+  const lastFetched = useRef<string | null>(null);
 
   useEffect(() => {
     if (!formData.prizes || formData.prizes.length !== segmentCount) {
@@ -24,7 +25,48 @@ export const BrandSettingsForm = ({ formData, updateFormData }: BrandSettingsFor
     }
   }, [segmentCount]);
 
-  // FUSION : handleFile gère l'URL pour preview image (logo, fond desktop, fond mobile)
+  // Auto-fetch brand colors from Brandfetch if brandUrl is filled
+  useEffect(() => {
+    const fetchColors = async () => {
+      if (!formData.brandUrl) return;
+      if (formData.brandUrl === lastFetched.current) return;
+      try {
+        const domain = new URL(formData.brandUrl).hostname;
+        const res = await fetch(`https://api.brandfetch.io/v2/brands/${domain}`, {
+          headers: {
+            Authorization: `Bearer ${import.meta.env.VITE_BRANDFETCH_KEY}`
+          }
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        const hexes = Array.isArray(data.colors)
+          ? (data.colors as Array<{ hex: string }>).map(c => c.hex)
+          : [];
+        if (hexes.length > 0) {
+          const [primary, secondary, accent] = [
+            hexes[0],
+            hexes[1] || hexes[0],
+            hexes[2] || hexes[0]
+          ];
+          const segmentColors = Array.from({ length: segmentCount }, (_, i) =>
+            hexes[i % hexes.length]
+          );
+          updateFormData({
+            primaryColor: primary,
+            secondaryColor: secondary,
+            accentColor: accent,
+            segmentColors
+          });
+          lastFetched.current = formData.brandUrl;
+        }
+      } catch (err) {
+        console.error('Failed to fetch brand colors', err);
+      }
+    };
+    fetchColors();
+  }, [formData.brandUrl, segmentCount]);
+
+  // Handle file upload + preview URL (logo, desktop, mobile backgrounds)
   const handleFile = (
     field: 'logo' | 'backgroundDesktop' | 'backgroundMobile'
   ) => (e: React.ChangeEvent<HTMLInputElement>) => {
