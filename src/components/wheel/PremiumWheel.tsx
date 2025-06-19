@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -41,8 +40,7 @@ export const PremiumWheel = ({
     "🍯 Miel Pops",
     "⭐ Bonus"
   ],
-  onSpin
-  ,
+  onSpin,
   size,
   styleType,
   className
@@ -54,6 +52,7 @@ export const PremiumWheel = ({
   const [wheelSize, setWheelSize] = useState<number>(size || 0);
   const wheelRef = useRef<HTMLDivElement>(null);
 
+  // Responsive wheel size (auto if not specified)
   useEffect(() => {
     if (size) {
       setWheelSize(size);
@@ -82,25 +81,24 @@ export const PremiumWheel = ({
 
   const spinWheel = () => {
     if (isSpinning) return;
-    
     setIsSpinning(true);
     setWinner(null);
-    
+
     const randomSpin = Math.random() * 360 + 1800; // 5+ tours
     const finalRotation = rotation + randomSpin;
     setRotation(finalRotation);
-    
+
     setTimeout(() => {
       const segmentAngle = 360 / prizes.length;
       const normalizedRotation = (360 - (finalRotation % 360)) % 360;
       const winnerIndex = Math.floor(normalizedRotation / segmentAngle);
       const selectedPrize = prizes[winnerIndex];
-      
+
       setWinner(selectedPrize);
       setShowConfetti(true);
       setIsSpinning(false);
       onSpin?.(selectedPrize);
-      
+
       setTimeout(() => setShowConfetti(false), 3000);
     }, 3000);
   };
@@ -113,11 +111,9 @@ export const PremiumWheel = ({
         backgroundPosition: 'center'
       };
     }
-
     if (fallbackBackground) {
       return { background: fallbackBackground };
     }
-
     return {
       background: `radial-gradient(ellipse at center, ${secondaryColor}22, ${primaryColor}88, ${primaryColor})`
     };
