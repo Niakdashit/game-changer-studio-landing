@@ -1,6 +1,7 @@
 
 export interface WizardFormData {
   logo: File | null;
+  logoUrl?: string | null;
   primaryColor: string;
   secondaryColor: string;
   accentColor?: string;

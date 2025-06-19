@@ -24,9 +24,14 @@ export const BrandSettingsForm = ({ formData, updateFormData }: BrandSettingsFor
     }
   }, [segmentCount]);
 
-  const handleFile = (field: 'logo' | 'backgroundDesktop' | 'backgroundMobile') => (e: React.ChangeEvent<HTMLInputElement>) => {
+  // FUSION : handleFile gère l'URL pour preview image (logo, fond desktop, fond mobile)
+  const handleFile = (
+    field: 'logo' | 'backgroundDesktop' | 'backgroundMobile'
+  ) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
-    updateFormData({ [field]: file } as Partial<WizardFormData>);
+    const urlField = `${field}Url` as keyof WizardFormData;
+    const url = file ? URL.createObjectURL(file) : null;
+    updateFormData({ [field]: file, [urlField]: url } as Partial<WizardFormData>);
   };
 
   const handlePrizeChange = (index: number, value: string) => {
@@ -58,6 +63,9 @@ export const BrandSettingsForm = ({ formData, updateFormData }: BrandSettingsFor
       <div className="space-y-2">
         <Label>Logo</Label>
         <Input type="file" accept="image/*" onChange={handleFile('logo')} />
+        {formData.logoUrl && (
+          <img src={formData.logoUrl} alt="Logo preview" className="h-16 mt-2" />
+        )}
       </div>
 
       <div className="space-y-2">
@@ -84,11 +92,17 @@ export const BrandSettingsForm = ({ formData, updateFormData }: BrandSettingsFor
       <div className="space-y-2">
         <Label>Desktop background</Label>
         <Input type="file" accept="image/*" onChange={handleFile('backgroundDesktop')} />
+        {formData.backgroundDesktopUrl && (
+          <img src={formData.backgroundDesktopUrl} alt="Desktop background preview" className="h-24 mt-2 rounded" />
+        )}
       </div>
 
       <div className="space-y-2">
         <Label>Mobile background</Label>
         <Input type="file" accept="image/*" onChange={handleFile('backgroundMobile')} />
+        {formData.backgroundMobileUrl && (
+          <img src={formData.backgroundMobileUrl} alt="Mobile background preview" className="h-24 mt-2 rounded" />
+        )}
       </div>
 
       <div className="space-y-2">

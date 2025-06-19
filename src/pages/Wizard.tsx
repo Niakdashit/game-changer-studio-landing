@@ -8,6 +8,7 @@ import type { WizardFormData } from '@/lib/types';
 const Wizard = () => {
   const [formData, setFormData] = useState<WizardFormData>({
     logo: null,
+    logoUrl: null,
     primaryColor: '#e52529',
     secondaryColor: '#ffd600',
     accentColor: '#009de0',
@@ -22,7 +23,9 @@ const Wizard = () => {
     style: 'Premium',
     brandUrl: '',
     backgroundDesktop: null,
+    backgroundDesktopUrl: null,
     backgroundMobile: null,
+    backgroundMobileUrl: null,
   });
 
   const updateFormData = (data: Partial<WizardFormData>) =>
