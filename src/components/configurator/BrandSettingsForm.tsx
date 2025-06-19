@@ -157,6 +157,8 @@ export const BrandSettingsForm = ({ formData, updateFormData }: BrandSettingsFor
             <SelectItem value="Premium">Premium</SelectItem>
             <SelectItem value="Fun">Fun</SelectItem>
             <SelectItem value="Minimal">Minimal</SelectItem>
+            <SelectItem value="Bold">Bold</SelectItem>
+            <SelectItem value="Glass">Glassmorphism</SelectItem>
           </SelectContent>
         </Select>
       </div>

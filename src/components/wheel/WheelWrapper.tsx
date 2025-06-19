@@ -70,6 +70,7 @@ export const WheelWrapper = ({ formData, onResult }: WheelWrapperProps) => {
               '🎁 Cadeau 6',
             ]
       }
+      styleType={formData.style}
       onSpin={onResult}
     />
   );
