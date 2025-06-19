@@ -10,8 +10,15 @@ interface PremiumWheelProps {
   accentColor?: string;
   logoUrl?: string;
   backgroundUrl?: string;
+  fallbackBackground?: string;
+  segmentColors?: string[];
   prizes?: string[];
   onSpin?: (result: string) => void;
+  /** Diameter of the wheel in pixels. If not provided, adapts to screen size */
+  size?: number;
+  /** Optional style keyword for future themes */
+  styleType?: string;
+  className?: string;
 }
 
 export const PremiumWheel = ({
@@ -22,6 +29,8 @@ export const PremiumWheel = ({
   accentColor = "#009de0",
   logoUrl,
   backgroundUrl,
+  fallbackBackground,
+  segmentColors,
   prizes = [
     "🍓 Fraise Tagada",
     "🐻 Ourson d'Or", 
@@ -33,23 +42,43 @@ export const PremiumWheel = ({
     "⭐ Bonus"
   ],
   onSpin
+  ,
+  size,
+  styleType,
+  className
 }: PremiumWheelProps) => {
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [winner, setWinner] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [wheelSize, setWheelSize] = useState<number>(size || 0);
   const wheelRef = useRef<HTMLDivElement>(null);
 
-  const segmentColors = [
+  useEffect(() => {
+    if (size) {
+      setWheelSize(size);
+      return;
+    }
+    const compute = () => {
+      const width = window.innerWidth;
+      setWheelSize(width < 640 ? 320 : 384);
+    };
+    compute();
+    window.addEventListener('resize', compute);
+    return () => window.removeEventListener('resize', compute);
+  }, [size]);
+
+  const defaultColors = [
     primaryColor,
     secondaryColor,
     accentColor,
-    "#3ab54a",
-    "#ffffff",
-    primaryColor,
-    secondaryColor,
-    accentColor
+    '#3ab54a',
+    '#ffffff'
   ];
+
+  const wheelColors = Array.from({ length: prizes.length }, (_, i) =>
+    segmentColors?.[i] || defaultColors[i % defaultColors.length]
+  );
 
   const spinWheel = () => {
     if (isSpinning) return;
@@ -84,15 +113,19 @@ export const PremiumWheel = ({
         backgroundPosition: 'center'
       };
     }
-    
+
+    if (fallbackBackground) {
+      return { background: fallbackBackground };
+    }
+
     return {
       background: `radial-gradient(ellipse at center, ${secondaryColor}22, ${primaryColor}88, ${primaryColor})`
     };
   };
 
   return (
-    <div 
-      className="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden"
+    <div
+      className={`min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden ${className || ''}`}
       style={getBackgroundStyle()}
     >
       {/* Ambient lighting effects */}
@@ -148,11 +181,13 @@ export const PremiumWheel = ({
         {/* Wheel */}
         <motion.div
           ref={wheelRef}
-          className="relative w-80 h-80 md:w-96 md:h-96 rounded-full shadow-2xl"
+          className="relative rounded-full shadow-2xl"
           style={{
-            background: `conic-gradient(from 0deg, ${segmentColors.map((color, i) => 
-              `${color} ${(i * 360 / segmentColors.length)}deg ${((i + 1) * 360 / segmentColors.length)}deg`
-            ).join(', ')})`,
+            width: `${wheelSize}px`,
+            height: `${wheelSize}px`,
+            background: `conic-gradient(from 0deg, ${wheelColors
+              .map((color, i) => `${color} ${(i * 360 / wheelColors.length)}deg ${((i + 1) * 360 / wheelColors.length)}deg`)
+              .join(', ')})`,
             boxShadow: `0 0 60px ${primaryColor}60, inset 0 0 20px rgba(255,255,255,0.2)`
           }}
           animate={{ rotate: rotation }}
@@ -175,9 +210,9 @@ export const PremiumWheel = ({
                   transformOrigin: 'center'
                 }}
               >
-                <div 
+                <div
                   className="absolute bg-black/20 rounded-lg px-2 py-1 backdrop-blur-sm"
-                  style={{ transform: 'translateY(-120px) rotate(-90deg)' }}
+                  style={{ transform: `translateY(-${wheelSize / 2 - 40}px) rotate(-90deg)` }}
                 >
                   {prize}
                 </div>
@@ -311,13 +346,13 @@ export const PremiumWheel = ({
                 key={i}
                 className="absolute w-3 h-3 rounded-full"
                 style={{
-                  background: segmentColors[i % segmentColors.length],
+                  background: wheelColors[i % wheelColors.length],
                   left: `${Math.random() * 100}%`,
                   top: '-10px'
                 }}
                 initial={{ y: -20, opacity: 1, rotate: 0 }}
                 animate={{ 
-                  y: window.innerHeight + 50, 
+                  y: (typeof document !== 'undefined' ? document.documentElement.clientHeight : 800) + 50,
                   opacity: 0,
                   rotate: 360 * 3
                 }}
