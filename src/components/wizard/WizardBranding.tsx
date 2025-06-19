@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +19,7 @@ export const WizardBranding = ({ formData, updateFormData, onNext }: WizardBrand
   const [objectives, setObjectives] = useState<string[]>(formData.objectives || []);
   const [audience, setAudience] = useState<string[]>(formData.audience || []);
   const [productName, setProductName] = useState(formData.productName || '');
+  const [logoPreviewUrl, setLogoPreviewUrl] = useState<string | null>(null);
 
   const brandTones = [
     { value: "Sérieux", icon: "💼", desc: "Professionnel et fiable" },
@@ -117,6 +117,11 @@ export const WizardBranding = ({ formData, updateFormData, onNext }: WizardBrand
     const file = event.target.files?.[0];
     if (file) {
       updateFormData({ logo: file });
+      
+      // Create preview URL
+      const previewUrl = URL.createObjectURL(file);
+      setLogoPreviewUrl(previewUrl);
+      
       // Extract colors from the uploaded logo
       extractColorsFromImage(file);
     }
@@ -125,7 +130,7 @@ export const WizardBranding = ({ formData, updateFormData, onNext }: WizardBrand
   const isValid = formData.logo && brandTone && objectives.length > 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5 overflow-auto">
       {/* Mobile Header */}
       <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-lg border-b border-gray-200/50 px-4 py-4 md:hidden">
         <div className="flex items-center justify-between">
@@ -173,10 +178,14 @@ export const WizardBranding = ({ formData, updateFormData, onNext }: WizardBrand
                   ? 'border-primary bg-primary/5 shadow-sm' 
                   : 'border-gray-300 hover:border-primary/50 hover:bg-primary/5'
               }`}>
-                {formData.logo ? (
+                {formData.logo && logoPreviewUrl ? (
                   <div className="text-primary">
-                    <div className="w-12 h-12 bg-primary/20 rounded-full mx-auto mb-3 flex items-center justify-center">
-                      <Check className="h-6 w-6" />
+                    <div className="w-24 h-24 mx-auto mb-3 rounded-lg overflow-hidden bg-white shadow-sm border border-gray-200">
+                      <img 
+                        src={logoPreviewUrl} 
+                        alt="Logo preview" 
+                        className="w-full h-full object-contain"
+                      />
                     </div>
                     <p className="font-semibold">{formData.logo.name}</p>
                     <p className="text-sm text-gray-600 mt-1">Couleurs extraites automatiquement</p>
